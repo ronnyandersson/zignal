@@ -1,0 +1,15 @@
+# ignore all IDE and editor generated files
+
+# eclipse
+/.project
+/.pydevproject
+
+# auto generated files
+/build/
+/dist/
+/MANIFEST
+*.pyc
+
+# files generated during normal usage
+*.wav
+*.png
