@@ -8,6 +8,7 @@
 /build/
 /dist/
 /MANIFEST
+/zignal.egg-info/
 *.pyc
 
 # files generated during normal usage
