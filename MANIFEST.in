@@ -1,0 +1,7 @@
+include README.*
+include LICENSE.*
+
+exclude notes.txt
+exclude TODO.txt
+
+global-exclude sandbox*.py
