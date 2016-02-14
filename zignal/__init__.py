@@ -6,7 +6,7 @@ This is the zignal library
 @license: MIT
 """
 
-__version__ = "0.0.3"
+__version__ = "0.1.0"
 
 from audio import *
 import filters
