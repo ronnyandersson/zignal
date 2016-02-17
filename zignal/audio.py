@@ -192,6 +192,61 @@ class Audio(object):
         self.nofsamples=len(self.samples)
         self._set_duration()
         
+    def _fade(self, millisec, direction):
+        """Internal method.
+        
+        Fade in/out is essentially the same exept the slope (and position) of the
+        ramp. Currently only a linear ramp is implemented.
+        """
+        assert np.issubdtype(self.samples.dtype, float), \
+            "only floating point processing implemented"
+        assert millisec >= 0, "Got a time machine?"
+        assert direction in ("in", "out")
+        
+        fade_seconds = millisec/1000
+        assert self.duration > fade_seconds, "fade cannot be longer than the length of the audio"
+        
+        sample_count = np.ceil(fade_seconds*self.fs)
+        self._logger.debug("fade %s sample count: %i" %(direction, sample_count))
+        
+        # generate the ramp
+        if direction is "out":
+            # ramp down
+            ramp = np.linspace(1, 0, num=sample_count, endpoint=True)
+        else:
+            # ramp up
+            ramp = np.linspace(0, 1, num=sample_count, endpoint=True)
+        
+        ones = np.ones(len(self)-len(ramp))
+        
+        # glue the ones and the ramp together
+        if direction is "out":
+            gains = np.append(ones, ramp, axis=0)
+        else:
+            gains = np.append(ramp, ones, axis=0)
+        
+        # expand the dimension so we get a one channels array of samples,
+        # as in (samples, channels)
+        gains = np.expand_dims(gains, axis=1)
+        
+        assert len(gains) ==  len(self)
+        
+        # repeat the gain vector so we get as many gain channels as all the channels
+        gains = np.repeat(gains, self.ch, axis=1)
+        
+        assert gains.shape == self.samples.shape
+        
+        # apply gains
+        self.samples = self.samples * gains
+        
+    def fade_in(self, millisec=10):
+        """Fade in over 'millisec' seconds. Applies on *all* channels"""
+        self._fade(millisec, "in")
+        
+    def fade_out(self, millisec=30):
+        """Fade out over 'millisec' seconds. Applies on *all* channels"""
+        self._fade(millisec, "out")
+        
     def delay(self, n, channel=1):
         """Delay channel x by n samples"""
         self.samples[:,channel-1] = np.pad(self.samples[:,channel-1], (n, 0),
@@ -843,4 +898,4 @@ if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',
                         level='DEBUG')
     
-    print('++ End of script ++')
+    print('-- Done --')
