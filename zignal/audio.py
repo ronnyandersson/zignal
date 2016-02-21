@@ -969,7 +969,10 @@ def db2pow(db):
     power = np.power(10, np.array(db)/10)
     return power
 
-def speed_of_sound(temperature=25, medium='air'):
+def speed_of_sound(temperature=20, medium='air'):
+    """The speed of sound is depending on the medium and the temperature. For air at
+    a temperature of 20 degree Celcius the speed of sound is approximately 343 [m/s]
+    """
     assert medium in ['air',], "TODO: water, iron"
     
     c = float('nan')
@@ -978,6 +981,11 @@ def speed_of_sound(temperature=25, medium='air'):
         c = 331.3*np.sqrt(1+temperature/273.15)
         
     return c
+
+def wavelength(frequency, speed=343.2):
+    """Calculate the wavelength l of frequency f given the speed (of sound)"""
+    l = speed/frequency
+    return l
 
 def rad2hz(w0, fs=96000):
     """Calculate a normalised rotational frequency so that w0=2*pi --> f0=fs
@@ -1013,6 +1021,7 @@ __all__ = [
            'db2lin',
            'db2pow',
            'speed_of_sound',
+           'wavelength',
            'rad2hz',
            'hz2rad',
            ]
