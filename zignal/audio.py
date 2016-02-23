@@ -1,13 +1,13 @@
-"""
+'''
 Created on Dec 31, 2013
 
 @author: Ronny Andersson (ronny@andersson.tk)
 @copyright: (c) 2013 Ronny Andersson
 @license: MIT
-"""
+'''
 
 # standard library
-from __future__ import division, print_function 
+from __future__ import division, print_function
 import logging
 import os
 import types
