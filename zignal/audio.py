@@ -570,8 +570,8 @@ class Audio(object):
         mag = lin2db(np.abs(Y))
         frq = np.fft.fftfreq(fftsize, 1/self.fs)
         
-        frq = frq[:fftsize/2]
-        mag = mag[:fftsize/2]
+        frq = frq[:int(fftsize/2)]
+        mag = mag[:int(fftsize/2)]
         
         return frq, mag
             
