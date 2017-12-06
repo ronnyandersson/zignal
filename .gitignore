@@ -11,6 +11,9 @@
 /zignal.egg-info/
 *.pyc
 
+# virtualenv
+/venv_zignal/
+
 # files generated during normal usage
 *.wav
 *.png

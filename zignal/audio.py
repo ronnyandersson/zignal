@@ -1,13 +1,13 @@
-"""
+'''
 Created on Dec 31, 2013
 
 @author: Ronny Andersson (ronny@andersson.tk)
 @copyright: (c) 2013 Ronny Andersson
 @license: MIT
-"""
+'''
 
 # standard library
-from __future__ import division, print_function 
+from __future__ import division, print_function
 import logging
 import os
 import types
@@ -191,6 +191,61 @@ class Audio(object):
         self.samples = self.samples[start:end]
         self.nofsamples=len(self.samples)
         self._set_duration()
+        
+    def _fade(self, millisec, direction):
+        """Internal method.
+        
+        Fade in/out is essentially the same exept the slope (and position) of the
+        ramp. Currently only a linear ramp is implemented.
+        """
+        assert np.issubdtype(self.samples.dtype, float), \
+            "only floating point processing implemented"
+        assert millisec >= 0, "Got a time machine?"
+        assert direction in ("in", "out")
+        
+        fade_seconds = millisec/1000
+        assert self.duration > fade_seconds, "fade cannot be longer than the length of the audio"
+        
+        sample_count = np.ceil(fade_seconds*self.fs)
+        self._logger.debug("fade %s sample count: %i" %(direction, sample_count))
+        
+        # generate the ramp
+        if direction is "out":
+            # ramp down
+            ramp = np.linspace(1, 0, num=sample_count, endpoint=True)
+        else:
+            # ramp up
+            ramp = np.linspace(0, 1, num=sample_count, endpoint=True)
+        
+        ones = np.ones(len(self)-len(ramp))
+        
+        # glue the ones and the ramp together
+        if direction is "out":
+            gains = np.append(ones, ramp, axis=0)
+        else:
+            gains = np.append(ramp, ones, axis=0)
+        
+        # expand the dimension so we get a one channels array of samples,
+        # as in (samples, channels)
+        gains = np.expand_dims(gains, axis=1)
+        
+        assert len(gains) ==  len(self)
+        
+        # repeat the gain vector so we get as many gain channels as all the channels
+        gains = np.repeat(gains, self.ch, axis=1)
+        
+        assert gains.shape == self.samples.shape
+        
+        # apply gains
+        self.samples = self.samples * gains
+        
+    def fade_in(self, millisec=10):
+        """Fade in over 'millisec' seconds. Applies on *all* channels"""
+        self._fade(millisec, "in")
+        
+    def fade_out(self, millisec=30):
+        """Fade out over 'millisec' seconds. Applies on *all* channels"""
+        self._fade(millisec, "out")
         
     def delay(self, n, channel=1):
         """Delay channel x by n samples"""
@@ -515,8 +570,8 @@ class Audio(object):
         mag = lin2db(np.abs(Y))
         frq = np.fft.fftfreq(fftsize, 1/self.fs)
         
-        frq = frq[:fftsize/2]
-        mag = mag[:fftsize/2]
+        frq = frq[:int(fftsize/2)]
+        mag = mag[:int(fftsize/2)]
         
         return frq, mag
             
@@ -603,6 +658,128 @@ class Sinetone(Audio):
     def set_sample_rate(self, new_fs):
         ratio = Audio.set_sample_rate(self, new_fs)
         self.f0 = ratio * self.f0
+        
+class Sinetones(Sinetone):
+    def __init__(self, *args, **kwargs):
+        """Generate multiple sinetones. This is a quick way to generate multichannel audio.
+        Each positional argument generates a sinetone at that channel. Setting the frequency
+        to 0 guarantees that the channel is muted (contains samples with the value 0).
+        Keywords accepted are similar to the ones used in the Sinetone() class.
+        
+        Example:
+        
+            >>> x = Sinetones(200, 500, 900, fs=24000, duration=1.5, gaindb=-6, phasedeg=0)
+            >>> print(x)
+            =======================================
+            classname        : Sinetones
+            sample rate      : 24000.0 [Hz]
+            channels         : 3
+            duration         : 1.500 [s]
+            datatype         : float64
+            samples per ch   : 36000
+            data size        : 0.824 [Mb]
+            has comment      : no
+            peak             : [ 0.5012  0.5012 -0.5012]
+            RMS              : [ 0.3544  0.3544  0.3544]
+            crestfactor      : [ 1.4142  1.4142  1.4142]
+            -----------------:---------------------
+            phase (all ch)   : 0.0 [deg]
+                             :
+            channel  1       : 200.0 [Hz]
+            channel  2       : 500.0 [Hz]
+            channel  3       : 900.0 [Hz]
+            -----------------:---------------------
+            >>>
+            
+        The gaindb argument can be an iterable of the same length as the number of frequencies
+        specified. In this case a gain can be applied individually for each channel.
+        
+            >>> x = Sinetones(1000, 2000, duration=1, gaindb=(-6, -20))
+            
+        A list can be used as the argument for the frequencies. Use the * notation to expand
+        the list:
+        
+            >>> import numpy as np
+            >>> f = np.zeros(8)
+            >>> f[3] = 700
+            >>> f[7] = 2000
+            >>> x = Sinetones(*f, duration=1)
+            >>> print(x)
+            =======================================
+            classname        : Sinetones
+            sample rate      : 96000.0 [Hz]
+            channels         : 8
+            duration         : 1.000 [s]
+            datatype         : float64
+            samples per ch   : 96000
+            data size        : 5.859 [Mb]
+            has comment      : no
+            peak             : [ 0.  0.  0. -1.  0.  0.  0.  1.]
+            RMS              : [ 0.      0.      0.      0.7071  0.      0.      0.      0.7071]
+            crestfactor      : [    nan     nan     nan  1.4142     nan     nan     nan  1.4142]
+            -----------------:---------------------
+            phase (all ch)   : 0.0 [deg]
+                             :
+            channel  1       :
+            channel  2       :
+            channel  3       :
+            channel  4       : 700.0 [Hz]
+            channel  5       :
+            channel  6       :
+            channel  7       :
+            channel  8       : 2000.0 [Hz]
+            -----------------:---------------------
+            >>>
+            
+        The argument phasedeg applies to all channels.
+        """
+        
+        fs                  = kwargs.pop('fs',          96000)
+        duration            = kwargs.pop('duration',    None)
+        nofsamples          = kwargs.pop('nofsamples',  0)
+        self._gaindb        = kwargs.pop('gaindb',      0)
+        self.phasedeg       = kwargs.pop('phasedeg',    0)
+        self.frequencies    = args
+        
+        for frequency in self.frequencies:
+            assert frequency < fs/2, "Sampling theorem is violated for frequency %.1f" %frequency
+        
+        if not isinstance(self._gaindb, int):
+            assert len(self._gaindb) == len(self.frequencies), \
+                "set as many gains as channels used: %i != %i" %(len(self._gaindb),
+                                                                 len(self.frequencies))
+        
+        Audio.__init__(self, channels=len(self.frequencies), fs=fs, nofsamples=nofsamples,
+                       duration=duration)
+        
+        for i, frequency in enumerate(self.frequencies):
+            if frequency != 0:
+                self._set_samples(idx=i, samples=self._sine_gen(frequency, self.phasedeg))
+            else:
+                pass # channel is silence
+            
+        self.gain(self._gaindb)
+        
+    def __repr__(self):
+        s = 'Sinetones(*%r, fs=%r, nofsamples=%r, gaindb=%r, phasedeg=%r)' \
+            %(list(self.frequencies), self.fs, self.nofsamples,self._gaindb,self.phasedeg)
+        return s
+    
+    def __str__(self):
+        s  = Audio.__str__(self)
+        s += 'phase (all ch)   : %.1f [deg]\n'  %self.phasedeg
+        s += '                 :\n'
+        for i, frequency in enumerate(self.frequencies):
+            if frequency != 0:
+                s += 'channel %2i       : %.1f [Hz]\n'   %(i+1, frequency)
+            else:
+                s += 'channel %2i       :\n'   %(i+1)
+        s += '-----------------:---------------------\n'
+        return s
+    
+    def set_sample_rate(self, new_fs):
+        ratio = Audio.set_sample_rate(self, new_fs)
+        self.frequencies = [ratio*f for f in self.frequencies]
         
 class SquareWave(Audio):
     def __init__(self, f0=997, fs=96000, duration=None, gaindb=0, nofsamples=0,
@@ -792,7 +969,10 @@ def db2pow(db):
     power = np.power(10, np.array(db)/10)
     return power
 
-def speed_of_sound(temperature=25, medium='air'):
+def speed_of_sound(temperature=20, medium='air'):
+    """The speed of sound is depending on the medium and the temperature. For air at
+    a temperature of 20 degree Celcius the speed of sound is approximately 343 [m/s]
+    """
     assert medium in ['air',], "TODO: water, iron"
     
     c = float('nan')
@@ -801,6 +981,11 @@ def speed_of_sound(temperature=25, medium='air'):
         c = 331.3*np.sqrt(1+temperature/273.15)
         
     return c
+
+def wavelength(frequency, speed=343.2):
+    """Calculate the wavelength l of frequency f given the speed (of sound)"""
+    l = speed/frequency
+    return l
 
 def rad2hz(w0, fs=96000):
     """Calculate a normalised rotational frequency so that w0=2*pi --> f0=fs
@@ -824,6 +1009,7 @@ __all__ = [
            # classes
            'Audio',
            'Sinetone',
+           'Sinetones',
            'SquareWave',
            'FourierSeries',
            'Noise',
@@ -835,6 +1021,7 @@ __all__ = [
            'db2lin',
            'db2pow',
            'speed_of_sound',
+           'wavelength',
            'rad2hz',
            'hz2rad',
            ]
@@ -843,4 +1030,4 @@ if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',
                         level='DEBUG')
     
-    print('++ End of script ++')
+    print('-- Done --')
