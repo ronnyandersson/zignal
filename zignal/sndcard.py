@@ -529,7 +529,7 @@ class PA(_Device):
 
         clipped = False
 
-        if np.issubdtype(rec.samples.dtype, float):
+        if np.issubdtype(rec.samples.dtype, np.floating):
             max_possible_positive_value = 1.0
         else:
             # integers used.

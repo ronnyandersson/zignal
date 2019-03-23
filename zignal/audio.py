@@ -197,7 +197,7 @@ class Audio(object):
         Fade in/out is essentially the same exept the slope (and position) of the
         ramp. Currently only a linear ramp is implemented.
         """
-        assert np.issubdtype(self.samples.dtype, float), \
+        assert np.issubdtype(self.samples.dtype, np.floating), \
             "only floating point processing implemented"
         assert millisec >= 0, "Got a time machine?"
         assert direction in ("in", "out")
@@ -352,7 +352,7 @@ class Audio(object):
         data. Returns the RMS value for each individual channel
         """
         if not (self.samples == 0).all():
-            if np.issubdtype(self.samples.dtype, float):
+            if np.issubdtype(self.samples.dtype, np.floating):
                 rms = np.sqrt(np.mean(np.power(self.samples, 2), axis=0))
             else:
                 # use a bigger datatype for ints since we most likely will
@@ -372,7 +372,7 @@ class Audio(object):
         """Calculate peak sample value (with sign)"""
 
         if len(self.samples) != 0:
-            if np.issubdtype(self.samples.dtype, float):
+            if np.issubdtype(self.samples.dtype, np.floating):
                 idx = np.absolute(self.samples).argmax(axis=0)
             else:
                 # We have to be careful when checking two's complement since the absolute value
