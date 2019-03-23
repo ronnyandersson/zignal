@@ -26,7 +26,7 @@ class Test_Sinetone(unittest.TestCase):
         # very close to zero. If it were, then a concatenation of two
         # sines would mean that we have one zero value too many at the
         # concatenation point --> discontinuity
-        self.assertNotAlmostEqual(x.samples[-1], 0, places=5)
+        self.assertNotAlmostEqual(float(x.samples[-1]), 0, places=5)
 
     def test_center_frequency(self):
         fs = 48000
