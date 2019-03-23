@@ -257,7 +257,7 @@ class Audio(object):
 
     def comment(self, comment=None):
         """Modify or return a string comment."""
-        assert isinstance(comment, (basestring, types.NoneType)), "A comment is a string"
+        assert isinstance(comment, (str, type(None))), "A comment is a string"
 
         if comment is not None:
             self._comment = comment

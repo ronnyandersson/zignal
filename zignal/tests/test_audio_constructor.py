@@ -29,7 +29,7 @@ class Test_EmptyConstructor(unittest.TestCase):
         self.assertIsInstance(self.x.samples, np.ndarray)
 
     def test_str_method(self):
-        self.assertIsInstance(self.x.__str__(), basestring)
+        self.assertIsInstance(self.x.__str__(), str)
 
     def test_empty_comment(self):
         self.assertSequenceEqual(self.x.comment(), '')
@@ -49,7 +49,7 @@ class Test_ConstructorChannels(unittest.TestCase):
         print(self.x)
 
     def test_str_method(self):
-        self.assertIsInstance(self.x.__str__(), basestring)
+        self.assertIsInstance(self.x.__str__(), str)
 
     def test_channels(self):
         self.assertEqual(self.x.ch, 4)
