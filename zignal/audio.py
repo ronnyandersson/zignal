@@ -526,10 +526,8 @@ class Audio(object):
         plt.figure(fig_id)
 
         #plt.semilogx(freq, mag, **kwargs)   # plots all channel directly
-        plt.hold(True)
         for ch in range(self.ch):
             plt.semilogx(freq, mag[:,ch], label='ch%2i' %(ch+1))
-        plt.hold(False)
 
         plt.xlim(xmin=1)    # we're not interested in freqs. below 1 Hz
         plt.ylim(ymin=ymin)
