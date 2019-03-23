@@ -24,9 +24,7 @@ def list_devices():
 #===================================================================================================
 # Abstract Base Class, inherit and implement the methods marked as @abstractmethod
 #===================================================================================================
-class _Device(object):
-    __metaclass__ = ABCMeta
-
+class _Device(object, metaclass=ABCMeta):
     def __init__(self, *args, **kwargs):
         self._logger = logging.getLogger(__name__)
 
