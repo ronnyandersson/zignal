@@ -364,7 +364,7 @@ class PA(_Device):
             it = iter(np.split(cpy.samples, len(cpy)/frames_per_buffer))
             try:
                 while True:
-                    chunk = it.next()
+                    chunk = next(it)
                     stream.write(chunk.tostring(), num_frames=frames_per_buffer)
                     counter += 1
 
@@ -424,8 +424,8 @@ class PA(_Device):
             it_in  = iter(np.split(rec.samples, len(rec)/frames_per_buffer))
             try:
                 while True:
-                    chunk_out   = it_out.next()
-                    chunk_in    = it_in.next()
+                    chunk_out   = next(it_out)
+                    chunk_in    = next(it_in)
 
                     stream.write(chunk_out.tostring(), num_frames=frames_per_buffer)
 
@@ -492,7 +492,7 @@ class PA(_Device):
             it_in = iter(np.split(rec.samples, len(rec)/frames_per_buffer))
             try:
                 while True:
-                    chunk_in    = it_in.next()
+                    chunk_in    = next(it_in)
                     raw_1d      = np.fromstring(stream.read(frames_per_buffer),
                                                 dtype=rec.samples.dtype)
                     # because we use an iterator chunk_in is a sliding window in the rec variable
