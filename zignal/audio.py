@@ -529,8 +529,8 @@ class Audio(object):
         for ch in range(self.ch):
             plt.semilogx(freq, mag[:,ch], label='ch%2i' %(ch+1))
 
-        plt.xlim(xmin=1)    # we're not interested in freqs. below 1 Hz
-        plt.ylim(ymin=ymin)
+        plt.xlim(left=1)    # we're not interested in freqs. below 1 Hz
+        plt.ylim(bottom=ymin)
 
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Magnitude [dB]')
