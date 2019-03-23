@@ -7,7 +7,6 @@ Created on 22 Mar 2014
 """
 
 # standard library
-from __future__ import division, print_function
 from collections import deque
 import logging
 import random

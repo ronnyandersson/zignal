@@ -10,7 +10,6 @@ Scientific pitch notation (also known as American Standard Pitch Notation
 '''
 
 # standard library
-from __future__ import division, print_function
 import logging
 import re
 

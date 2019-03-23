@@ -7,7 +7,6 @@ Created on 15 Feb 2015
 """
 
 # standard library
-from __future__ import division, print_function
 from abc import ABCMeta, abstractmethod
 import logging
 
