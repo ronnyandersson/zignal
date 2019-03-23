@@ -77,7 +77,7 @@ class Audio(object):
             # copy the data to avoid unexpected data corruption
             self.samples = initialdata.copy()
 
-            if np.rank(self.samples) == 1:
+            if self.samples.ndim == 1:
                 # if the array is
                 #     array([ 1.,  1.,  1.])
                 # we expand it to
@@ -87,7 +87,7 @@ class Audio(object):
                 #
                 self.samples = np.expand_dims(self.samples, axis=1)
 
-            assert np.rank(self.samples) == 2, 'shape must be (Nsamples, Nchannels)'
+            assert self.samples.ndim == 2, 'shape must be (Nsamples, Nchannels)'
 
             self.nofsamples, self.ch = self.samples.shape
 
@@ -929,7 +929,7 @@ class WavFile(Audio):
         self.filename = filename
 
         fs, samples = scipy.io.wavfile.read(filename)
-        if np.rank(samples) == 1:
+        if samples.ndim == 1:
             samples = np.expand_dims(samples, axis=1)
 
         Audio.__init__(self, fs=fs, initialdata=samples)

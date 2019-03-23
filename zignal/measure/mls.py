@@ -289,7 +289,7 @@ class _MLS_base(object):
         # the averaging finally creates a new array that has it's own data
         average = np.average(reshaped, axis=0)
 
-        average = np.expand_dims(average, axis=1) # up the rank to 2
+        average = np.expand_dims(average, axis=1) # up the ndim to 2
         # data is [[X_1],
         #          [X_2],
         #          [X_3]]

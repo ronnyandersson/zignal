@@ -32,14 +32,14 @@ class Test_back_to_back(unittest.TestCase):
 
     def test_lin_to_db_to_lin_arrays(self):
         x = lin2db(db2lin((             1.234567,   2.345678)))
-        self.assertEqual(np.rank(x), 1)
+        self.assertEqual(x.ndim, 1)
         self.assertEqual(len(x), 2)
         self.assertAlmostEqual(x[0],    1.234567,               places=6)
         self.assertAlmostEqual(x[1],                2.345678,   places=6)
 
     def test_pow_to_db_to_pow_arrays(self):
         x = pow2db(db2pow((             1.234567,   2.345678)))
-        self.assertEqual(np.rank(x), 1)
+        self.assertEqual(x.ndim, 1)
         self.assertEqual(len(x), 2)
         self.assertAlmostEqual(x[0],    1.234567,               places=6)
         self.assertAlmostEqual(x[1],                2.345678,   places=6)
@@ -131,72 +131,72 @@ class Test_db_to_pow_known_values(unittest.TestCase):
 class Test_lin_to_db_input_datatypes(unittest.TestCase):
     def test_single(self):
         x = lin2db(1)
-        self.assertEqual(np.rank(x), 0)
+        self.assertEqual(x.ndim, 0)
         self.assertAlmostEqual(x, 0.0, places=6)
 
     def test_tuple(self):
         x = lin2db((1, 0.1))
-        self.assertEqual(np.rank(x), 1)
+        self.assertEqual(x.ndim, 1)
         self.assertAlmostEqual(x[0],   0.0, places=6)
         self.assertAlmostEqual(x[1], -20.0, places=6)
 
     def test_list(self):
         x = lin2db([10, 1])
-        self.assertEqual(np.rank(x), 1)
+        self.assertEqual(x.ndim, 1)
         self.assertAlmostEqual(x[0],  20.0, places=6)
         self.assertAlmostEqual(x[1],   0.0, places=6)
 
-    def test_np_rank_1(self):
+    def test_np_ndim_1(self):
         x = lin2db(np.ones(10))
-        self.assertEqual(np.rank(x), 1)
+        self.assertEqual(x.ndim, 1)
         self.assertTrue((x <  0.0001).all())
         self.assertTrue((x > -0.0001).all())
 
-    def test_np_rank_2_10x4(self):
+    def test_np_ndim_2_10x4(self):
         x = lin2db(np.ones((10, 4)))
-        self.assertEqual(np.rank(x), 2)
+        self.assertEqual(x.ndim, 2)
         self.assertTrue((x <  0.0001).all())
         self.assertTrue((x > -0.0001).all())
 
-    def test_np_rank_2_4x10(self):
+    def test_np_ndim_2_4x10(self):
         x = lin2db(np.ones((4, 10)))
-        self.assertEqual(np.rank(x), 2)
+        self.assertEqual(x.ndim, 2)
         self.assertTrue((x <  0.0001).all())
         self.assertTrue((x > -0.0001).all())
 
 class Test_db_to_lin_input_datatypes(unittest.TestCase):
     def test_single(self):
         x = db2lin(0)
-        self.assertEqual(np.rank(x), 0)
+        self.assertEqual(x.ndim, 0)
         self.assertAlmostEqual(x, 1.0, places=6)
 
     def test_tuple(self):
         x = db2lin((40, -40))
-        self.assertEqual(np.rank(x), 1)
+        self.assertEqual(x.ndim, 1)
         self.assertAlmostEqual(x[0],  100.0,  places=6)
         self.assertAlmostEqual(x[1],    0.01, places=6)
 
     def test_list(self):
         x = db2lin([-20, 60])
-        self.assertEqual(np.rank(x), 1)
+        self.assertEqual(x.ndim, 1)
         self.assertAlmostEqual(x[0],    0.1, places=6)
         self.assertAlmostEqual(x[1], 1000.0, places=6)
 
-    def test_np_rank_1(self):
+    def test_np_ndim_1(self):
         x = db2lin(np.zeros(10))
-        self.assertEqual(np.rank(x), 1)
+        self.assertEqual(x.ndim, 1)
         self.assertTrue((x < 1.0001).all())
         self.assertTrue((x > 0.9999).all())
 
-    def test_np_rank_2_10x4(self):
+    def test_np_ndim_2_10x4(self):
         x = db2lin(np.zeros((10, 4)))
-        self.assertEqual(np.rank(x), 2)
+        self.assertEqual(x.ndim, 2)
         self.assertTrue((x < 1.0001).all())
         self.assertTrue((x > 0.9999).all())
 
-    def test_np_rank_2_4x10(self):
+    def test_np_ndim_2_4x10(self):
         x = db2lin(np.zeros((4, 10)))
-        self.assertEqual(np.rank(x), 2)
+        self.assertEqual(x.ndim, 2)
         self.assertTrue((x < 1.0001).all())
         self.assertTrue((x > 0.9999).all())
 
