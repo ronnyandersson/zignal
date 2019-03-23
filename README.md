@@ -6,7 +6,7 @@ This is a python audio signal processing library.
 ## Example usage
 
     >>> import zignal
-    >>> 
+    >>>
     >>> x = zignal.Sinetone(fs=44100, f0=997, duration=0.1, gaindb=-20)
     >>> print(x)
     =======================================
@@ -25,13 +25,13 @@ This is a python audio signal processing library.
     frequency        : 997.0 [Hz]
     phase            : 0.0 [deg]
     -----------------:---------------------
-    
+
     >>> x.fade_out(millisec=10)
     >>> x.convert_to_float(targetbits=32)
     >>> x.write_wav_file("sinetone.wav")
     >>> x.plot()
     >>> x.plot_fft()
-    >>> 
+    >>>
     >>> f = zignal.filters.biquads.RBJ(filtertype="peak", gaindb=-6, f0=997, Q=0.707, fs=96000)
     >>> print(f)
     =======================================
@@ -48,10 +48,10 @@ This is a python audio signal processing library.
     gain             : -6.00 [dB]
     f0               : 997.0 [Hz]
     Q                : 0.7070
-    
+
     >>> f.plot_mag_phase()
     >>> f.plot_pole_zero()
-    >>> 
+    >>>
 
 See the examples folder for more examples.
 

@@ -18,8 +18,8 @@ if __name__ == '__main__':
                         level='DEBUG')
     x = Audio()
     print(x)
-    
+
     x.comment(comment="We can add comments\nthat spans multiple lines.")
-    
+
     print(x.comment())
     print(x)
