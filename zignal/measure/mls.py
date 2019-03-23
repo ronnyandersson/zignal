@@ -21,7 +21,7 @@ from zignal.filters.biquads import RBJ
 from zignal.filters.linearfilter import Filter
 
 # expose the measure.mlstaps.TAPS dictionary in the measure.mls namespace
-from mlstaps import *
+from .mlstaps import *
 
 __all__ = [
            'MLS',

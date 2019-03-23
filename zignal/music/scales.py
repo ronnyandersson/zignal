@@ -13,7 +13,7 @@ import logging
 import numpy as np
 
 # local libraries
-import spn
+from . import spn
 
 def equal_temperament(n):
     """Twelve-tone equal temperament (12TET) divides the octave into 12

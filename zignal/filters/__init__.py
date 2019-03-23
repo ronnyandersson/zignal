@@ -6,8 +6,8 @@ Filters package
 @license: MIT
 """
 
-import linearfilter
-import biquads
+from . import linearfilter
+from . import biquads
 
 __all__ = [
            'biquads',

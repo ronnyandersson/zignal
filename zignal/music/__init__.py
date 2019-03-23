@@ -6,8 +6,8 @@ Music package
 @license: MIT
 """
 
-import scales
-import spn
+from . import scales
+from . import spn
 
 __all__ = [
            'scales',
