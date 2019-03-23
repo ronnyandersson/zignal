@@ -544,8 +544,8 @@ class PA(_Device):
 
         for i, peaks in enumerate(zip(rec.peak()[0], rec.peak()[1])):
             peak_val, peak_pos = peaks
-            # abs(-32768) overflows in signed 16 bit, use long(...) to get a bigger data type
-            if abs(long(peak_val)) >= max_possible_positive_value:
+            # abs(-32768) overflows in signed 16 bit, use long(...) in py2 to get a bigger data type
+            if abs(int(peak_val)) >= max_possible_positive_value:
                 clipped = True
                 clip_position = peak_pos/rec.fs
                 self._logger.warn("channel %02i clipped at %.3f" %(i+1, clip_position))
