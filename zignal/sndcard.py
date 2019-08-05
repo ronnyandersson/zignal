@@ -7,13 +7,16 @@ Created on 15 Feb 2015
 """
 
 # standard library
-from __future__ import division, print_function
 from abc import ABCMeta, abstractmethod
 import logging
+import warnings
 
 # external libraries
 import numpy as np
-import pyaudio
+try:
+    import pyaudio
+except ImportError:
+    warnings.warn("PyAudio not found. Will not be able to create sndcard instances", category=ImportWarning)
 
 # local libraries
 from zignal import Audio, Noise
@@ -25,9 +28,7 @@ def list_devices():
 #===================================================================================================
 # Abstract Base Class, inherit and implement the methods marked as @abstractmethod
 #===================================================================================================
-class _Device(object):
-    __metaclass__ = ABCMeta
-
+class _Device(object, metaclass=ABCMeta):
     def __init__(self, *args, **kwargs):
         self._logger = logging.getLogger(__name__)
 
@@ -367,7 +368,7 @@ class PA(_Device):
             it = iter(np.split(cpy.samples, len(cpy)/frames_per_buffer))
             try:
                 while True:
-                    chunk = it.next()
+                    chunk = next(it)
                     stream.write(chunk.tostring(), num_frames=frames_per_buffer)
                     counter += 1
 
@@ -427,8 +428,8 @@ class PA(_Device):
             it_in  = iter(np.split(rec.samples, len(rec)/frames_per_buffer))
             try:
                 while True:
-                    chunk_out   = it_out.next()
-                    chunk_in    = it_in.next()
+                    chunk_out   = next(it_out)
+                    chunk_in    = next(it_in)
 
                     stream.write(chunk_out.tostring(), num_frames=frames_per_buffer)
 
@@ -495,7 +496,7 @@ class PA(_Device):
             it_in = iter(np.split(rec.samples, len(rec)/frames_per_buffer))
             try:
                 while True:
-                    chunk_in    = it_in.next()
+                    chunk_in    = next(it_in)
                     raw_1d      = np.fromstring(stream.read(frames_per_buffer),
                                                 dtype=rec.samples.dtype)
                     # because we use an iterator chunk_in is a sliding window in the rec variable
@@ -532,7 +533,7 @@ class PA(_Device):
 
         clipped = False
 
-        if np.issubdtype(rec.samples.dtype, float):
+        if np.issubdtype(rec.samples.dtype, np.floating):
             max_possible_positive_value = 1.0
         else:
             # integers used.
@@ -547,8 +548,8 @@ class PA(_Device):
 
         for i, peaks in enumerate(zip(rec.peak()[0], rec.peak()[1])):
             peak_val, peak_pos = peaks
-            # abs(-32768) overflows in signed 16 bit, use long(...) to get a bigger data type
-            if abs(long(peak_val)) >= max_possible_positive_value:
+            # abs(-32768) overflows in signed 16 bit, use long(...) in py2 to get a bigger data type
+            if abs(int(peak_val)) >= max_possible_positive_value:
                 clipped = True
                 clip_position = peak_pos/rec.fs
                 self._logger.warn("channel %02i clipped at %.3f" %(i+1, clip_position))

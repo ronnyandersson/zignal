@@ -7,7 +7,6 @@ Created on 16 Feb 2014
 """
 
 # standard library
-from __future__ import division, print_function
 import logging
 from abc import ABCMeta, abstractmethod
 
@@ -60,9 +59,7 @@ class BiquadNormalised(Biquad):
         B, A = self.get_coefficients()
         return (B[0], B[1], B[2], A[1], A[2])   #FIXME: Verify this
 
-class _BiquadParametric(BiquadNormalised):
-    __metaclass__ = ABCMeta
-
+class _BiquadParametric(BiquadNormalised, metaclass=ABCMeta):
     def __init__(self, filtertype=None, gaindb=0, f0=997, Q=0.707, fs=96000):
         BiquadNormalised.__init__(self, B=None, A=None, fs=fs)
         self._verify_parameters(filtertype, gaindb, f0, Q)

@@ -9,7 +9,6 @@ This example will play some audio on the system standard sound card.
 '''
 
 # standard library
-from __future__ import print_function
 import logging
 
 # custom libraries

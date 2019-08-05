@@ -7,7 +7,6 @@ Created on 21 Jun 2015
 '''
 
 # standard library
-from __future__ import division, print_function
 import unittest
 
 # external libraries
@@ -73,7 +72,7 @@ class Test_Filter(unittest.TestCase):
 
     def test_str_method(self):
         f = linearfilter.Filter()
-        self.assertIsInstance(f.__str__(), basestring)
+        self.assertIsInstance(f.__str__(), str)
 
 class Test_normalised_frequency(unittest.TestCase):
     def test_full_samplerate(self):

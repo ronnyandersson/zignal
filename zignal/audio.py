@@ -7,7 +7,6 @@ Created on Dec 31, 2013
 '''
 
 # standard library
-from __future__ import division, print_function
 import logging
 import os
 import types
@@ -198,7 +197,7 @@ class Audio(object):
         Fade in/out is essentially the same exept the slope (and position) of the
         ramp. Currently only a linear ramp is implemented.
         """
-        assert np.issubdtype(self.samples.dtype, float), \
+        assert np.issubdtype(self.samples.dtype, np.floating), \
             "only floating point processing implemented"
         assert millisec >= 0, "Got a time machine?"
         assert direction in ("in", "out")
@@ -258,7 +257,7 @@ class Audio(object):
 
     def comment(self, comment=None):
         """Modify or return a string comment."""
-        assert isinstance(comment, (basestring, types.NoneType)), "A comment is a string"
+        assert isinstance(comment, (str, type(None))), "A comment is a string"
 
         if comment is not None:
             self._comment = comment
@@ -353,7 +352,7 @@ class Audio(object):
         data. Returns the RMS value for each individual channel
         """
         if not (self.samples == 0).all():
-            if np.issubdtype(self.samples.dtype, float):
+            if np.issubdtype(self.samples.dtype, np.floating):
                 rms = np.sqrt(np.mean(np.power(self.samples, 2), axis=0))
             else:
                 # use a bigger datatype for ints since we most likely will
@@ -373,7 +372,7 @@ class Audio(object):
         """Calculate peak sample value (with sign)"""
 
         if len(self.samples) != 0:
-            if np.issubdtype(self.samples.dtype, float):
+            if np.issubdtype(self.samples.dtype, np.floating):
                 idx = np.absolute(self.samples).argmax(axis=0)
             else:
                 # We have to be careful when checking two's complement since the absolute value
@@ -527,13 +526,11 @@ class Audio(object):
         plt.figure(fig_id)
 
         #plt.semilogx(freq, mag, **kwargs)   # plots all channel directly
-        plt.hold(True)
         for ch in range(self.ch):
             plt.semilogx(freq, mag[:,ch], label='ch%2i' %(ch+1))
-        plt.hold(False)
 
-        plt.xlim(xmin=1)    # we're not interested in freqs. below 1 Hz
-        plt.ylim(ymin=ymin)
+        plt.xlim(left=1)    # we're not interested in freqs. below 1 Hz
+        plt.ylim(bottom=ymin)
 
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Magnitude [dB]')

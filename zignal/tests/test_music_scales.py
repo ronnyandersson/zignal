@@ -7,7 +7,6 @@ Created on 24 Feb 2015
 '''
 
 # standard library
-from __future__ import division, print_function
 import unittest
 
 # external libraries

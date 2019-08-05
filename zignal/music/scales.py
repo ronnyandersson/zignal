@@ -7,14 +7,13 @@ Created on 21 Feb 2015
 '''
 
 # standard library
-from __future__ import division, print_function
 import logging
 
 # external libraries
 import numpy as np
 
 # local libraries
-import spn
+from . import spn
 
 def equal_temperament(n):
     """Twelve-tone equal temperament (12TET) divides the octave into 12

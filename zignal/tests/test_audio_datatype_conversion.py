@@ -7,7 +7,6 @@ Created on 28 Feb 2014
 '''
 
 # standard library
-from __future__ import division, print_function
 import unittest
 
 # external libraries
@@ -82,8 +81,8 @@ class Test_ConvertFloatToInt(unittest.TestCase):
         # 8 bits 2's complement
         # min is -128
         # max is  127
-        self.assertEquals(self.x.samples[0], -127) # must be symmetrical
-        self.assertEquals(self.x.samples[1],  127) # must be symmetrical
+        self.assertEqual(self.x.samples[0], -127) # must be symmetrical
+        self.assertEqual(self.x.samples[1],  127) # must be symmetrical
 
     def test_int16(self):
         self.convert(targetbits=16)
@@ -92,8 +91,8 @@ class Test_ConvertFloatToInt(unittest.TestCase):
         # 16 bits 2's complement
         # min is -32768
         # max is  32767
-        self.assertEquals(self.x.samples[0], -32767) # must be symmetrical
-        self.assertEquals(self.x.samples[1],  32767) # must be symmetrical
+        self.assertEqual(self.x.samples[0], -32767) # must be symmetrical
+        self.assertEqual(self.x.samples[1],  32767) # must be symmetrical
 
     def test_int32(self):
         self.convert(targetbits=32)
@@ -102,8 +101,8 @@ class Test_ConvertFloatToInt(unittest.TestCase):
         # 32 bits 2's complement
         # min is -2147483648
         # max is  2147483647
-        self.assertEquals(self.x.samples[0], -2147483647) # must be symmetrical
-        self.assertEquals(self.x.samples[1],  2147483647) # must be symmetrical
+        self.assertEqual(self.x.samples[0], -2147483647) # must be symmetrical
+        self.assertEqual(self.x.samples[1],  2147483647) # must be symmetrical
 
 class Test_ConvertIntToFloat32(unittest.TestCase):
     def convert(self, y, targetbits=None):

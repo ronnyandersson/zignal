@@ -7,7 +7,6 @@ Created on 22 Mar 2014
 """
 
 # standard library
-from __future__ import division, print_function
 from collections import deque
 import logging
 import random
@@ -22,7 +21,7 @@ from zignal.filters.biquads import RBJ
 from zignal.filters.linearfilter import Filter
 
 # expose the measure.mlstaps.TAPS dictionary in the measure.mls namespace
-from mlstaps import *
+from .mlstaps import *
 
 __all__ = [
            'MLS',
@@ -123,7 +122,7 @@ class _MLS_base(object):
         while True:
             seq = np.zeros((chunk, 1), dtype=np.int64)
             for i in range(chunk):
-                seq[i] = bitgenerator.next()
+                seq[i] = next(bitgenerator)
             yield seq
 
     def generator_samples(self, chunk=1024):
@@ -133,7 +132,7 @@ class _MLS_base(object):
         """
         chunkgen = self.generator_chunk(chunk)
         while True:
-            binarychunk = chunkgen.next()
+            binarychunk = next(chunkgen)
 
             # create a view of the data. This points to the same memory structure.
             # Compare this to the union structure in c++. Data size must match that
@@ -159,7 +158,7 @@ class _MLS_base(object):
         """
 
         chunkgen        = self.generator_samples(chunk=self.L)
-        full_sequence   = chunkgen.next()
+        full_sequence   = next(chunkgen)
         reps_sequence   = np.tile(full_sequence.T, repeats).T
         self._logger.debug("May share memory: %s" %np.may_share_memory(full_sequence,
                                                                        reps_sequence))
