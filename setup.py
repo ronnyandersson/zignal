@@ -17,9 +17,15 @@ setup(
     author              = 'Ronny Andersson',
     author_email        = 'ronny@andersson.tk',
     packages            = find_packages(),
-#    install_requires    = [
-#                           'PyAudio >= 0.2.8',
-#                           ],
+    install_requires    = [
+                           'numpy',
+                           'scipy',
+                           'matplotlib',
+                           ],
+    extras_require      = {
+                           'sndcard': ['pyaudio'],
+                           'testing': ['nose'],
+                          },
     url                 = 'https://github.com/ronnyandersson/zignal',
     download_url        = 'https://pypi.python.org/pypi/zignal',
     license             = open('LICENSE.txt').read(),

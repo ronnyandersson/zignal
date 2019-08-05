@@ -57,15 +57,29 @@ See the examples folder for more examples.
 
 ## Requirements
 
-This library relies on numpy, scipy, matplotlib and pyaudio. At the moment it is recommended to install these using the systems default package manager. On debian/ubuntu, do a
+This library relies on numpy, scipy, matplotlib and optionally pyaudio (and nose for unit testing). It is recommended to create a virtual environment and let pip install the dependencies automatically.
 
-    sudo apt-get install python-numpy python-scipy python-matplotlib python-pyaudio
-
-to install the requirements. Once the basic requirements are installed, use pip to install zignal in for example a virtualenv. Create a virtualenv that can access the system site packages,
-
-    virtualenv --system-site-packages <name-of-virtualenv>
+    python3 -m venv <name-of-virtualenv>
     . <name-of-virtualenv>/bin/activate
     pip install zignal
+
+Optionally, to be able to use a soundcard, first install the python development headers and the portaudio development files. On debian/ubuntu,
+
+    sudo apt install python3-dev portaudio19-dev
+
+then run
+
+    pip install zignal[sndcard]
+
+which will automatically build the portaudio library and then pyaudio.
+
+## Local development
+
+Create a python3 virtualenv and install from the requirements.txt file to make the zignal library editable. Note that the python development headers (python3-dev) and portaudio19-dev must be installed first.
+
+    python3 -m venv zignaldev
+    . zignaldev/bin/activate
+    pip install -r requirements.txt
 
 ## Design goals
 

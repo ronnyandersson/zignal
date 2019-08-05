@@ -9,10 +9,14 @@ Created on 15 Feb 2015
 # standard library
 from abc import ABCMeta, abstractmethod
 import logging
+import warnings
 
 # external libraries
 import numpy as np
-import pyaudio
+try:
+    import pyaudio
+except ImportError:
+    warnings.warn("PyAudio not found. Will not be able to create sndcard instances", category=ImportWarning)
 
 # local libraries
 from zignal import Audio, Noise
