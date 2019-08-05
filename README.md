@@ -2,6 +2,7 @@
 
 This is a python audio signal processing library.
 
+Python 2 is no longer supported, the last version to support python 2 is 0.2.0
 
 ## Example usage
 
