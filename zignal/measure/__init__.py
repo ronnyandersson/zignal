@@ -6,7 +6,7 @@ Measurements package
 @license: MIT
 """
 
-import mls
+from . import mls
 
 __all__ = [
            'mls',

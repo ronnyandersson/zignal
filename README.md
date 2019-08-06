@@ -2,11 +2,12 @@
 
 This is a python audio signal processing library.
 
+Python 2 is no longer supported, the last version to support python 2 is 0.2.0
 
 ## Example usage
 
     >>> import zignal
-    >>> 
+    >>>
     >>> x = zignal.Sinetone(fs=44100, f0=997, duration=0.1, gaindb=-20)
     >>> print(x)
     =======================================
@@ -25,13 +26,13 @@ This is a python audio signal processing library.
     frequency        : 997.0 [Hz]
     phase            : 0.0 [deg]
     -----------------:---------------------
-    
+
     >>> x.fade_out(millisec=10)
     >>> x.convert_to_float(targetbits=32)
     >>> x.write_wav_file("sinetone.wav")
     >>> x.plot()
     >>> x.plot_fft()
-    >>> 
+    >>>
     >>> f = zignal.filters.biquads.RBJ(filtertype="peak", gaindb=-6, f0=997, Q=0.707, fs=96000)
     >>> print(f)
     =======================================
@@ -48,24 +49,38 @@ This is a python audio signal processing library.
     gain             : -6.00 [dB]
     f0               : 997.0 [Hz]
     Q                : 0.7070
-    
+
     >>> f.plot_mag_phase()
     >>> f.plot_pole_zero()
-    >>> 
+    >>>
 
 See the examples folder for more examples.
 
 ## Requirements
 
-This library relies on numpy, scipy, matplotlib and pyaudio. At the moment it is recommended to install these using the systems default package manager. On debian/ubuntu, do a
+This library relies on numpy, scipy, matplotlib and optionally pyaudio (and nose for unit testing). It is recommended to create a virtual environment and let pip install the dependencies automatically.
 
-    sudo apt-get install python-numpy python-scipy python-matplotlib python-pyaudio
-
-to install the requirements. Once the basic requirements are installed, use pip to install zignal in for example a virtualenv. Create a virtualenv that can access the system site packages,
-
-    virtualenv --system-site-packages <name-of-virtualenv>
+    python3 -m venv <name-of-virtualenv>
     . <name-of-virtualenv>/bin/activate
     pip install zignal
+
+Optionally, to be able to use a soundcard, first install the python development headers and the portaudio development files. On debian/ubuntu,
+
+    sudo apt install python3-dev portaudio19-dev
+
+then run
+
+    pip install zignal[sndcard]
+
+which will automatically build the portaudio library and then pyaudio.
+
+## Local development
+
+Create a python3 virtualenv and install from the requirements.txt file to make the zignal library editable. Note that the python development headers (python3-dev) and portaudio19-dev must be installed first.
+
+    python3 -m venv zignaldev
+    . zignaldev/bin/activate
+    pip install -r requirements.txt
 
 ## Design goals
 

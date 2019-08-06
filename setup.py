@@ -4,12 +4,12 @@ import ast
 
 # Dynamically calculate the version
 version = None
-with file(os.path.join('zignal', '__init__.py')) as fp:
+with open(os.path.join('zignal', '__init__.py'), 'r') as fp:
     for line in fp:
         if line.startswith('__version__'):
             version = ast.parse(line).body[0].value.s
             break
-        
+
 assert version is not None, "Problem reading the version from __init__.py"
 
 setup(
@@ -17,9 +17,15 @@ setup(
     author              = 'Ronny Andersson',
     author_email        = 'ronny@andersson.tk',
     packages            = find_packages(),
-#    install_requires    = [
-#                           'PyAudio >= 0.2.8',
-#                           ],
+    install_requires    = [
+                           'numpy',
+                           'scipy',
+                           'matplotlib',
+                           ],
+    extras_require      = {
+                           'sndcard': ['pyaudio'],
+                           'testing': ['nose'],
+                          },
     url                 = 'https://github.com/ronnyandersson/zignal',
     download_url        = 'https://pypi.python.org/pypi/zignal',
     license             = open('LICENSE.txt').read(),
@@ -97,7 +103,7 @@ setup(
                            'License :: OSI Approved :: MIT License',
                            'Operating System :: OS Independent',
                            'Programming Language :: Python',
-                           'Programming Language :: Python :: 2.7',
+                           'Programming Language :: Python :: 3.6',
                            'Topic :: Education',
                            'Topic :: Multimedia :: Sound/Audio :: Analysis',
                            'Topic :: Multimedia :: Sound/Audio :: Capture/Recording',

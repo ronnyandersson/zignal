@@ -7,7 +7,6 @@ Created on 15 Feb 2015
 '''
 
 # standard library
-from __future__ import print_function
 import logging
 
 # custom libraries
@@ -18,8 +17,8 @@ if __name__ == '__main__':
                         level='DEBUG')
     x = Audio()
     print(x)
-    
+
     x.comment(comment="We can add comments\nthat spans multiple lines.")
-    
+
     print(x.comment())
     print(x)
