@@ -189,6 +189,22 @@ class Audio(object):
         self.nofsamples=len(self.samples)
         self._set_duration()
 
+    def is_empty(self):
+        """Check if all samples in all channels are zero, then file is empty."""
+        return np.all(self.samples == 0)
+
+    def is_probably_empty(self, limit=-80):
+        """Check if the absolute peak is below <limit> dB"""
+        peak, idx = self.peak()
+        peak = np.abs(peak)
+        self._logger.debug("abs(peak) is %s dB at %s sec",
+                          np.array_str(lin2db(peak),
+                                       precision=4, suppress_small=True),
+                          np.array_str(idx/self.fs,
+                                       precision=3, suppress_small=True),
+                          )
+        return np.all(peak <= db2lin(limit))
+
     def trim(self, start=None, end=None):
         """Trim samples **IN PLACE** """
         self.samples = self.samples[start:end]
