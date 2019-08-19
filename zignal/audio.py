@@ -211,6 +211,10 @@ class Audio(object):
         self.nofsamples=len(self.samples)
         self._set_duration()
 
+    def trim_sec(self, start=None, end=None):
+        """Trim (in seconds) **IN PLACE** """
+        self.trim(int(start*self.fs), int(end*self.fs))
+
     def _fade(self, millisec, direction):
         """Internal method.
 
