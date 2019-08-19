@@ -279,6 +279,12 @@ class Audio(object):
         """Return a vector of time values, starting with t0=0. Useful when plotting."""
         return np.linspace(0, self.duration, num=self.nofsamples, endpoint=False)
 
+    def get_channel(self, channel):
+        assert channel != 0, "channel count starts at 1"
+        assert channel <= self.ch, \
+            "channel %i does not exist, %i channels available" % (channel, self.ch)
+        return Audio(fs=self.fs, initialdata=self.samples[:,channel-1])
+
     def comment(self, comment=None):
         """Modify or return a string comment."""
         assert isinstance(comment, (str, type(None))), "A comment is a string"
