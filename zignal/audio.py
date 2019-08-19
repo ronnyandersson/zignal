@@ -294,6 +294,30 @@ class Audio(object):
 
         return self._comment
 
+    def to_mono(self):
+        """Mix down to mono, reduces the channel count to 1. """
+
+        # FIXME: this only works on floats, not ints
+
+        # sum all samples, do the actual mix
+        samples_mono = np.sum(self.samples, axis=1)
+
+        # return a new instance since any subclass data is lost
+        mono = Audio(fs=self.fs, initialdata=samples_mono)
+
+        # Two correlated signals will have a combined gain of 2, so we need to
+        # reduce the gain to not overflow. We reduce the gain by 1 over the
+        # number of channels.
+        # 1/1 = 1.00    -->  0        [dB]
+        # 1/2 = 0.50    --> -6.02...  [dB]
+        # 1/3 = 0.33... --> -9.54...  [dB]
+        # 1/4 = 0.25    --> -12.04... [dB]
+        gain = lin2db(1/self.ch)
+        self._logger.debug("Total gain reduction: %.3f [dB]", gain)
+        mono.gain(gain)
+
+        return mono
+
     def append(self, *args):
         """Add (append) channels *to the right* of the current audio data.
 
