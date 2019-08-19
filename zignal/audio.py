@@ -144,6 +144,10 @@ class Audio(object):
         assert len(samples) == self.nofsamples
         self.samples[:,idx] = samples
 
+    def copy(self):
+        """deep:ish copy"""
+        return Audio(fs=self.fs, initialdata=self.samples)
+
     def pretty_string_samples(self, idx_start=0, idx_end=20, precision=4, header=False):
         s = ''
         if header:
