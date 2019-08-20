@@ -144,6 +144,10 @@ class Audio(object):
         assert len(samples) == self.nofsamples
         self.samples[:,idx] = samples
 
+    def copy(self):
+        """deep:ish copy"""
+        return Audio(fs=self.fs, initialdata=self.samples)
+
     def pretty_string_samples(self, idx_start=0, idx_end=20, precision=4, header=False):
         s = ''
         if header:
@@ -185,11 +189,31 @@ class Audio(object):
         self.nofsamples=len(self.samples)
         self._set_duration()
 
+    def is_empty(self):
+        """Check if all samples in all channels are zero, then file is empty."""
+        return np.all(self.samples == 0)
+
+    def is_probably_empty(self, limit=-80):
+        """Check if the absolute peak is below <limit> dB"""
+        peak, idx = self.peak()
+        peak = np.abs(peak)
+        self._logger.debug("abs(peak) is %s dB at %s sec",
+                          np.array_str(lin2db(peak),
+                                       precision=4, suppress_small=True),
+                          np.array_str(idx/self.fs,
+                                       precision=3, suppress_small=True),
+                          )
+        return np.all(peak <= db2lin(limit))
+
     def trim(self, start=None, end=None):
         """Trim samples **IN PLACE** """
         self.samples = self.samples[start:end]
         self.nofsamples=len(self.samples)
         self._set_duration()
+
+    def trim_sec(self, start=None, end=None):
+        """Trim (in seconds) **IN PLACE** """
+        self.trim(int(start*self.fs), int(end*self.fs))
 
     def _fade(self, millisec, direction):
         """Internal method.
@@ -255,6 +279,12 @@ class Audio(object):
         """Return a vector of time values, starting with t0=0. Useful when plotting."""
         return np.linspace(0, self.duration, num=self.nofsamples, endpoint=False)
 
+    def get_channel(self, channel):
+        assert channel != 0, "channel count starts at 1"
+        assert channel <= self.ch, \
+            "channel %i does not exist, %i channels available" % (channel, self.ch)
+        return Audio(fs=self.fs, initialdata=self.samples[:,channel-1])
+
     def comment(self, comment=None):
         """Modify or return a string comment."""
         assert isinstance(comment, (str, type(None))), "A comment is a string"
@@ -263,6 +293,30 @@ class Audio(object):
             self._comment = comment
 
         return self._comment
+
+    def to_mono(self):
+        """Mix down to mono, reduces the channel count to 1. """
+
+        # FIXME: this only works on floats, not ints
+
+        # sum all samples, do the actual mix
+        samples_mono = np.sum(self.samples, axis=1)
+
+        # return a new instance since any subclass data is lost
+        mono = Audio(fs=self.fs, initialdata=samples_mono)
+
+        # Two correlated signals will have a combined gain of 2, so we need to
+        # reduce the gain to not overflow. We reduce the gain by 1 over the
+        # number of channels.
+        # 1/1 = 1.00    -->  0        [dB]
+        # 1/2 = 0.50    --> -6.02...  [dB]
+        # 1/3 = 0.33... --> -9.54...  [dB]
+        # 1/4 = 0.25    --> -12.04... [dB]
+        gain = lin2db(1/self.ch)
+        self._logger.debug("Total gain reduction: %.3f [dB]", gain)
+        mono.gain(gain)
+
+        return mono
 
     def append(self, *args):
         """Add (append) channels *to the right* of the current audio data.
