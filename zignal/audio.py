@@ -9,7 +9,6 @@ Created on Dec 31, 2013
 # standard library
 import logging
 import os
-import types
 
 # external libraries
 import matplotlib.pyplot as plt
