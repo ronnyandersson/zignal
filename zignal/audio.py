@@ -12,10 +12,11 @@ import os
 import types
 
 # external libraries
+import matplotlib.pyplot as plt
 import numpy as np
+import samplerate
 import scipy.signal
 import scipy.io.wavfile
-import matplotlib.pyplot as plt
 
 #===================================================================================================
 # Classes
@@ -635,8 +636,35 @@ class Audio(object):
         # Triangular Probability Density Function
         noise = np.random.triangular(-1, 0, 1, self.samples.shape)
 
-    def resample(self, targetrate=44100):
-        raise NotImplementedError('TODO')
+    def resample(self, targetrate=8000, converter_type="sinc_best"):
+        """Use the python bindings for the Secret Rabbit Code library
+        (aka libsamplerate) to perform sample rate conversion.
+
+        Converts **IN PLACE**
+
+        https://pypi.org/project/samplerate/
+        http://www.mega-nerd.com/SRC/index.html
+        """
+
+        # From API docs:
+        # src_ratio : Equal to output_sample_rate / input_sample_rate.
+        ratio = targetrate / self.fs
+
+        self._logger.debug(
+            "source: %.2f destination: %.2f ratio %f",
+            self.fs, targetrate, ratio)
+
+        # We can use the simple API here since we always operate on the whole
+        # audio clip. See http://www.mega-nerd.com/SRC/api_simple.html
+        self.samples = samplerate.resample(
+            self.samples, ratio, converter_type=converter_type)
+
+        # The number of samples have changed, that is the whole point of
+        # this operation. Get the new values and calculate the new duration,
+        # hopefully that shouldn't change too much.
+        self.nofsamples, self.ch = self.samples.shape
+        self.fs = targetrate
+        self._set_duration()
 
     def set_sample_rate(self, new_fs):
         """Change the sample rate fs *without* up/down sample conversion.
