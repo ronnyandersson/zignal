@@ -533,7 +533,7 @@ class Audio(object):
             self._logger.warn("datatype is %s" %self.samples.dtype)
 
         try:
-            scipy.io.wavfile.write(filename, self.fs, self.samples)
+            scipy.io.wavfile.write(filename, int(self.fs), self.samples)
         except:
             self._logger.exception("Could not write file: '%s'" %filename)
 
