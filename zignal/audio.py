@@ -233,7 +233,7 @@ class Audio(object):
         self._logger.debug("fade %s sample count: %i" %(direction, sample_count))
 
         # generate the ramp
-        if direction is "out":
+        if direction == "out":
             # ramp down
             ramp = np.linspace(1, 0, num=sample_count, endpoint=True)
         else:
@@ -243,7 +243,7 @@ class Audio(object):
         ones = np.ones(len(self)-len(ramp))
 
         # glue the ones and the ramp together
-        if direction is "out":
+        if direction == "out":
             gains = np.append(ones, ramp, axis=0)
         else:
             gains = np.append(ramp, ones, axis=0)
