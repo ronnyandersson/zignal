@@ -229,7 +229,7 @@ class Audio(object):
         fade_seconds = millisec/1000
         assert self.duration > fade_seconds, "fade cannot be longer than the length of the audio"
 
-        sample_count = np.ceil(fade_seconds*self.fs)
+        sample_count = int(np.ceil(fade_seconds*self.fs))
         self._logger.debug("fade %s sample count: %i" %(direction, sample_count))
 
         # generate the ramp
