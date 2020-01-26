@@ -63,7 +63,7 @@ class _MLS_base(object):
         assert N    is not None, "Please specify MLS order"
         assert taps is not None, "Please specify feedback taps"
         assert isinstance(taps, (tuple, list))
-        assert len(taps) is not 0, "taps are empty!"
+        assert len(taps) != 0, "taps are empty!"
 
         self._logger    = logging.getLogger(__name__)
         self.N          = N
