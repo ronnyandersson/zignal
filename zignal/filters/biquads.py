@@ -62,30 +62,62 @@ class BiquadNormalised(Biquad):
 class _BiquadParametric(BiquadNormalised, metaclass=ABCMeta):
     def __init__(self, filtertype=None, gaindb=0, f0=997, Q=0.707, fs=96000):
         BiquadNormalised.__init__(self, B=None, A=None, fs=fs)
-        self._verify_parameters(filtertype, gaindb, f0, Q)
+
+        self._filtertype    = filtertype
+        self._gaindb        = gaindb
+        self._f0            = f0
+        self._Q             = Q
+
         self.calculate_coefficients(filtertype=filtertype, gaindb=gaindb, f0=f0, Q=Q)
 
-    def _verify_parameters(self, filtertype, gaindb, f0, Q):
-        """Internal verification that we are at least partially sane before
-        proceeding.
-        """
-        assert filtertype is not None, "Specify a filter type (lowpass, highpass, peak, ..."
-        assert f0 >= 0,             "negative frequency is not allowed"
-        assert f0 < self.fs/2,      "f0 must be below the Nyquist frequency (fs/2)"
-        assert Q > 0,               "Q needs to be positive and above zero (we divide by Q)"
+    @property
+    def gaindb(self):
+        """Get the gain, in dB"""
+        return self._gaindb
 
-        self.filtertype = filtertype
-        self.gaindb     = gaindb
-        self.f0         = f0
-        self.Q          = Q
+    @property
+    def f0(self):
+        """Get the center frequency of the filter"""
+        return self._f0
+
+    @property
+    def Q(self):
+        """Get the Q value"""
+        return self._Q
+
+    @gaindb.setter
+    def gaindb(self, value):
+        """Set the gain, in dB"""
+        self._logger.debug("setting gain: %7.2f", value)
+        self._gaindb = value
+        self._update()
+
+    @f0.setter
+    def f0(self, value):
+        """Set the center frequency"""
+        assert value >= 0,          "negative frequency is not allowed"
+        assert value < self.fs/2,   "f0 must be below the Nyquist frequency (fs/2)"
+        self._f0 = value
+        self._update()
+
+    @Q.setter
+    def Q(self, value):
+        """Set the Q value, the width of the filter"""
+        assert value > 0, "Q needs to be positive and above zero (we divide by Q)"
+        self._Q = value
+        self._update()
+
+    def _update(self):
+        self.calculate_coefficients(
+            filtertype=self._filtertype, gaindb=self._gaindb, f0=self._f0, Q=self._Q)
 
     def __str__(self):
         s  = BiquadNormalised.__str__(self)
         # += '-----------------:---------------------\n'
-        s += 'type             : %s\n'          %self.filtertype
-        s += 'gain             : %.2f [dB]\n'   %self.gaindb
-        s += 'f0               : %.1f [Hz]\n'   %self.f0
-        s += 'Q                : %.4f\n'        %self.Q
+        s += 'type             : %s\n'          % self._filtertype
+        s += 'gain             : %.2f [dB]\n'   % self._gaindb
+        s += 'f0               : %.1f [Hz]\n'   % self._f0
+        s += 'Q                : %.4f\n'        % self._Q
         return s
 
     @abstractmethod
@@ -115,7 +147,6 @@ class RBJ(_BiquadParametric):
         _BiquadParametric.__init__(self, filtertype=filtertype, gaindb=gaindb, f0=f0, Q=Q, fs=fs)
 
     def calculate_coefficients(self, filtertype=None, gaindb=None, f0=None, Q=None):
-        self._verify_parameters(filtertype, gaindb, f0, Q)
 
         # intermediate variables
         _A      = 10**(gaindb/40)
@@ -224,7 +255,6 @@ class Zolzer(_BiquadParametric):
         _BiquadParametric.__init__(self, filtertype=filtertype, gaindb=gaindb, f0=f0, Q=Q, fs=fs)
 
     def calculate_coefficients(self, filtertype=None, gaindb=None, f0=None, Q=None):
-        self._verify_parameters(filtertype, gaindb, f0, Q)
 
         K = np.tan(np.pi*f0/self.fs)
 
