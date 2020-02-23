@@ -229,11 +229,11 @@ class Audio(object):
         fade_seconds = millisec/1000
         assert self.duration > fade_seconds, "fade cannot be longer than the length of the audio"
 
-        sample_count = np.ceil(fade_seconds*self.fs)
+        sample_count = int(np.ceil(fade_seconds*self.fs))
         self._logger.debug("fade %s sample count: %i" %(direction, sample_count))
 
         # generate the ramp
-        if direction is "out":
+        if direction == "out":
             # ramp down
             ramp = np.linspace(1, 0, num=sample_count, endpoint=True)
         else:
@@ -243,7 +243,7 @@ class Audio(object):
         ones = np.ones(len(self)-len(ramp))
 
         # glue the ones and the ramp together
-        if direction is "out":
+        if direction == "out":
             gains = np.append(ones, ramp, axis=0)
         else:
             gains = np.append(ramp, ones, axis=0)
@@ -537,7 +537,7 @@ class Audio(object):
         except:
             self._logger.exception("Could not write file: '%s'" %filename)
 
-    def plot(self, ch=1, plotname=None, **kwargs):
+    def plot(self, ch=1, plotname=None, plotrange=(None, None), **kwargs):
         """Plot the audio data on a time domain plot.
 
         example:
@@ -546,17 +546,28 @@ class Audio(object):
             x1.plot(linestyle='--', marker='x', color='r', label='sine at 0.2Hz')
 
         """
-        # TODO: add range to plotdata [None:None] is everything
 
         if ch != 'all':
             assert ch-1 < self.ch, "channel does not exist"
 
+        if plotrange[0] == None:
+            plotrange = (0, plotrange[1])
+        if plotrange[1] == None:
+            plotrange = (plotrange[0], self.duration)
+
+        assert plotrange[0] >= 0 and plotrange[1] <= self.duration, "plotrange is out of bounds"
+        assert plotrange[0] <= plotrange[1], "malformed plotrange"
+
+        # Any fractional samples are truncated here
+        samplerange = (int(plotrange[0]*self.fs), int(plotrange[1]*self.fs))
+        timerange = np.linspace(plotrange[0], plotrange[1], num=samplerange[1]-samplerange[0], endpoint=False)
+
         plt.figure(1)
         plt.title("%s" %self.__class__.__name__)
         if ch != 'all':
-            plt.plot(self.get_time(), self.samples[:,ch-1], **kwargs)
+            plt.plot(timerange, self.samples[samplerange[0]:samplerange[1],ch-1], **kwargs)
         else:
-            plt.plot(self.get_time(), self.samples, **kwargs)
+            plt.plot(timerange, self.samples[samplerange[0]:samplerange[1],:], **kwargs)
         plt.xlabel('Time [s]')
         plt.ylabel('Amplitude [linear]')
         if 'label' in kwargs:
