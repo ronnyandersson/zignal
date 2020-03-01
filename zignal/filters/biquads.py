@@ -6,15 +6,16 @@ Created on 16 Feb 2014
 @license: MIT
 """
 
-# standard library
+# Standard library
 import logging
 from abc import ABCMeta, abstractmethod
 
-# external libraries
+# Third party
 import numpy as np
 
-# local libraries
+# Internal
 from zignal.filters.linearfilter import IIR
+
 
 class Biquad(IIR):
     """Implements a two-pole, two-zeros biquadratic filter, biquad."""

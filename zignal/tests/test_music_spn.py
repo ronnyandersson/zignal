@@ -6,14 +6,15 @@ Created on 21 Feb 2015
 @license: MIT
 '''
 
-# standard library
+# Standard library
 import unittest
 
-# external libraries
+# Third party
 import nose
 
-# local libraries
+# Internal
 from zignal.music import spn
+
 
 class Test_key2index(unittest.TestCase):
     def test_increasing(self):

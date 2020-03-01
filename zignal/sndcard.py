@@ -6,20 +6,22 @@ Created on 15 Feb 2015
 @license: MIT
 """
 
-# standard library
-from abc import ABCMeta, abstractmethod
+# Standard library
 import logging
 import warnings
+from abc import ABCMeta, abstractmethod
 
-# external libraries
+# Third party
 import numpy as np
+
+# Internal
+from zignal import Audio, Noise
+
 try:
     import pyaudio
 except ImportError:
     warnings.warn("PyAudio not found. Will not be able to create sndcard instances", category=ImportWarning)
 
-# local libraries
-from zignal import Audio, Noise
 
 def list_devices():
     """List all available sound cards."""

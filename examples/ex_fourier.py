@@ -6,10 +6,10 @@ Created on 16 Feb 2015
 @license: MIT
 '''
 
-# standard library
+# Standard library
 import logging
 
-# custom libraries
+# Internal
 from zignal.audio import Audio, FourierSeries
 
 if __name__ == '__main__':

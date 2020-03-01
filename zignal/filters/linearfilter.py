@@ -6,16 +6,17 @@ Created on 25 Jan 2014
 @license: MIT
 """
 
-# standard library
+# Standard library
 import logging
 
-# external libraries
+# Third party
+import matplotlib.pyplot as plt
 import numpy as np
 import scipy.signal
-import matplotlib.pyplot as plt
 
-# local libraries
+# Internal
 from zignal import hz2rad, rad2hz
+
 
 #===================================================================================================
 # Linear filter implementations

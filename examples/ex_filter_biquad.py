@@ -6,10 +6,10 @@ Created on 23 Aug 2015
 @license: MIT
 '''
 
-# standard library
+# Standard library
 import logging
 
-# custom libraries
+# Internal
 from zignal.filters.biquads import RBJ, Zolzer
 
 if __name__ == '__main__':

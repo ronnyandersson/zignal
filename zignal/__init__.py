@@ -8,11 +8,11 @@ This is the zignal library
 
 __version__ = "0.6.0"
 
-from .audio import *
-from . import filters
-from . import measure
-from . import music
-from . import sndcard
+# must be imported first
+from .audio import *    # isort:skip
+
+# Local folders
+from . import filters, measure, music, sndcard
 
 __all__ = [
            'filters',

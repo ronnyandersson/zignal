@@ -6,16 +6,16 @@ Created on Dec 31, 2013
 @license: MIT
 '''
 
-# standard library
+# Standard library
 import logging
 import os
 
-# external libraries
+# Third party
 import matplotlib.pyplot as plt
 import numpy as np
 import samplerate
-import scipy.signal
 import scipy.io.wavfile
+import scipy.signal
 
 #===================================================================================================
 # Classes

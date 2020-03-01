@@ -6,11 +6,12 @@ Created on 7 Dec 2015
 @license: MIT
 '''
 
-# standard library
+# Standard library
 import logging
 
-# custom libraries
+# Internal
 import zignal
+
 
 def fake_system(x, fs=None):
     f1 = zignal.filters.biquads.RBJ(filtertype="peak", gaindb=-30, f0=10,   Q=0.707*10, fs=fs)

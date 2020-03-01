@@ -6,10 +6,10 @@ Created on 15 Feb 2015
 @license: MIT
 '''
 
-# standard library
+# Standard library
 import logging
 
-# custom libraries
+# Internal
 from zignal.audio import Sinetone
 
 if __name__ == '__main__':

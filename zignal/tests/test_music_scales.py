@@ -6,14 +6,15 @@ Created on 24 Feb 2015
 @license: MIT
 '''
 
-# standard library
+# Standard library
 import unittest
 
-# external libraries
+# Third party
 import nose
 
-# local libraries
+# Internal
 from zignal.music import scales
+
 
 class Test_midi_scales(unittest.TestCase):
     # Benson, DJ. (2006). Music: A Mathematical Offering. Cambridge University Press.

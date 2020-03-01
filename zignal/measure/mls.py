@@ -6,22 +6,22 @@ Created on 22 Mar 2014
 @license: MIT
 """
 
-# standard library
-from collections import deque
+# Standard library
 import logging
 import random
+from collections import deque
 
-# external libraries
+# Third party
 import numpy as np
 import scipy.signal
 
-# local libraries
+# Internal
 from zignal import Audio
 from zignal.filters.biquads import RBJ
 from zignal.filters.linearfilter import Filter
 
 # expose the measure.mlstaps.TAPS dictionary in the measure.mls namespace
-from .mlstaps import *
+from .mlstaps import *  # isort:skip
 
 __all__ = [
            'MLS',

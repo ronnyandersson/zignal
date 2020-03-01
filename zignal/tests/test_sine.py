@@ -6,14 +6,15 @@ Created on 26 Oct 2014
 @license: MIT
 '''
 
-# standard library
+# Standard library
 import unittest
 
-# external libraries
+# Third party
 import nose
 
-# local libraries
+# Internal
 from zignal import Sinetone, SquareWave
+
 
 class Test_Sinetone(unittest.TestCase):
     def test_endpoint(self):

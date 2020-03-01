@@ -6,15 +6,16 @@ Created on 23 Oct 2014
 @license: MIT
 '''
 
-# standard library
+# Standard library
 import unittest
 
-# external libraries
-import numpy as np
+# Third party
 import nose
+import numpy as np
 
-# local libraries
-from zignal import lin2db, db2lin, pow2db, db2pow
+# Internal
+from zignal import db2lin, db2pow, lin2db, pow2db
+
 
 class Test_back_to_back(unittest.TestCase):
     def test_nested(self):

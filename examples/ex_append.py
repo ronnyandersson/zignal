@@ -6,11 +6,11 @@ Created on 15 Feb 2015
 @license: MIT
 '''
 
-# standard library
+# Standard library
 import logging
 
-# custom libraries
-from zignal.audio import Audio, Sinetone, Noise
+# Internal
+from zignal.audio import Audio, Noise, Sinetone
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',

@@ -9,9 +9,10 @@ Scientific pitch notation (also known as American Standard Pitch Notation
 (ASPN) and International Pitch Notation (IPN))
 '''
 
-# standard library
+# Standard library
 import logging
 import re
+
 
 def key2index(key='A4'):
     """ Scientific pitch notation key mapped to an index

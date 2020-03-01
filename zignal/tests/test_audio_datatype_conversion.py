@@ -6,15 +6,16 @@ Created on 28 Feb 2014
 @license: MIT
 '''
 
-# standard library
+# Standard library
 import unittest
 
-# external libraries
-import numpy as np
+# Third party
 import nose
+import numpy as np
 
-# local libraries
+# Internal
 from zignal import Audio
+
 
 class Test_ConvertBackToBack(unittest.TestCase):
     def setUp(self):

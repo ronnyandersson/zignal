@@ -6,14 +6,15 @@ Created on 21 Jun 2015
 @license: MIT
 '''
 
-# standard library
+# Standard library
 import unittest
 
-# external libraries
+# Third party
 import nose
 
-# local libraries
+# Internal
 from zignal.filters import linearfilter
+
 
 class Test_Filter(unittest.TestCase):
     def verify_coefficients(self, f, B, A):

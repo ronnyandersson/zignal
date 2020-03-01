@@ -8,11 +8,12 @@ This example will play some audio on the system standard sound card.
 @license: MIT
 '''
 
-# standard library
+# Standard library
 import logging
 
-# custom libraries
+# Internal
 import zignal.sndcard
+
 
 def ex_1_play():
     # The recommended way of creating and using a sndcard instance is by using the

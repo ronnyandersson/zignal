@@ -6,15 +6,16 @@ Created on 31 Oct 2014
 @license: MIT
 '''
 
-# standard library
+# Standard library
 import unittest
 
-# external libraries
-import numpy as np
+# Third party
 import nose
+import numpy as np
 
-# local libraries
+# Internal
 from zignal import Audio
+
 
 class Test_single_channel(unittest.TestCase):
     def setUp(self):
