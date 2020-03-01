@@ -15,6 +15,7 @@ from zignal.audio import Sinetone
 if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',
                         level='DEBUG')
+    logging.getLogger('matplotlib').setLevel(logging.INFO)
 
     fs  = 1000
     f0  = 10

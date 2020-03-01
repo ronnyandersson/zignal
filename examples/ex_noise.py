@@ -15,6 +15,7 @@ from zignal.audio import Audio, Noise
 if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',
                         level='DEBUG')
+    logging.getLogger('matplotlib').setLevel(logging.INFO)
 
     fs  = 96000
     dur = 1.0

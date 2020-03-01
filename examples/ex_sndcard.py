@@ -90,6 +90,7 @@ def ex_4_rec():
 if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',
                         level='DEBUG')
+    logging.getLogger('matplotlib').setLevel(logging.INFO)
 
     ex_1_play()
     ex_2_play()
