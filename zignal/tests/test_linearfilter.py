@@ -75,6 +75,7 @@ class Test_Filter(unittest.TestCase):
         f = linearfilter.Filter()
         self.assertIsInstance(f.__str__(), str)
 
+
 class Test_normalised_frequency(unittest.TestCase):
     def test_full_samplerate(self):
         self.assertAlmostEqual(linearfilter.normalised_frequency(f0=44100, fs=44100), 2.0, places=7)
@@ -85,11 +86,12 @@ class Test_normalised_frequency(unittest.TestCase):
     def test_quarter_samplerate(self):
         self.assertAlmostEqual(linearfilter.normalised_frequency(f0=24000, fs=96000), 0.5, places=7)
 
+
 if __name__ == "__main__":
     noseargs = [__name__,
                 "--verbosity=2",
-                "--logging-format=%(asctime)s %(levelname)-8s: %(name)-15s "+
-                                 "%(module)-15s %(funcName)-20s %(message)s",
+                "--logging-format=%(asctime)s %(levelname)-8s: %(name)-15s " +
+                "%(module)-15s %(funcName)-20s %(message)s",
                 "--logging-level=DEBUG",
                 __file__,
                 ]

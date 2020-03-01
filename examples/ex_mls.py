@@ -27,6 +27,7 @@ def fake_system(x, fs=None):
 
     return y
 
+
 if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',
                         level='DEBUG')
@@ -53,7 +54,7 @@ if __name__ == '__main__':
     # Create the mls instance and its full sequence.
     mls = zignal.measure.mls.MLS(N=N, taps=taps, fs=fs, repeats=rep, B=B, A=A)
 
-    print (repr(mls))
+    print(repr(mls))
     print(mls)
 
     mls.plot(label="mls signal unfiltered")

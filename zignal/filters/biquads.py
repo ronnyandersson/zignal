@@ -28,11 +28,12 @@ class Biquad(IIR):
         """
         self._logger.debug("set coefficients (class Biquad)")
 
-        self._B = np.array((1,0,0)) if B is None else np.array(B)
-        self._A = np.array((1,0,0)) if A is None else np.array(A)
+        self._B = np.array((1, 0, 0)) if B is None else np.array(B)
+        self._A = np.array((1, 0, 0)) if A is None else np.array(A)
 
         assert len(self._B) == 3, "Biquads have three B coefficients"
         assert len(self._A) == 3, "Biquads have three A coefficients"
+
 
 class BiquadNormalised(Biquad):
     """The normalised biquad always has A[0]=1.0
@@ -53,12 +54,13 @@ class BiquadNormalised(Biquad):
     def get_coefficients_Pd(self):
         """Return coefficients compatible with the [biquad~] object in Pd"""
         B, A = self.get_coefficients()
-        return (B[0], B[1], B[2], -A[1], -A[2]) #FIXME: Verify this
+        return (B[0], B[1], B[2], -A[1], -A[2])     # FIXME: Verify this
 
     def get_coefficients_MaxMSP(self):
         """Return coefficients compatible with the [biquad~] object in Max/MSP"""
         B, A = self.get_coefficients()
-        return (B[0], B[1], B[2], A[1], A[2])   #FIXME: Verify this
+        return (B[0], B[1], B[2], A[1], A[2])       # FIXME: Verify this
+
 
 class _BiquadParametric(BiquadNormalised, metaclass=ABCMeta):
     def __init__(self, filtertype=None, gaindb=0, f0=997, Q=0.707, fs=96000):
@@ -126,6 +128,7 @@ class _BiquadParametric(BiquadNormalised, metaclass=ABCMeta):
         # Implement this method in child class
         pass
 
+
 class RBJ(_BiquadParametric):
     """An implementation of the Audio EQ cookbook by Robert Bristow-Johnson
 
@@ -176,7 +179,7 @@ class RBJ(_BiquadParametric):
 
         elif filtertype == self.Types.bandpass1:
             # BPF:        H(s) = s / (s^2 + s/Q + 1)  (constant skirt gain, peak gain = Q)
-            b0 =   _sin_w0/2    #  =   Q*_alpha
+            b0 =   _sin_w0/2    # =   Q*_alpha
             b1 =   0
             b2 =  -_sin_w0/2    # =  -Q*_alpha
             a0 =   1 + _alpha
@@ -239,9 +242,10 @@ class RBJ(_BiquadParametric):
 
         else:
             valid = [i for i in vars(self.Types) if not i.startswith("__")]
-            raise NotImplementedError("Valid types are: %s" %valid)
+            raise NotImplementedError("Valid types are: %s" % valid)
 
         self.set_coefficients(B=(b0, b1, b2), A=(a0, a1, a2))
+
 
 class Zolzer(_BiquadParametric):
     """An implementation of Equalizer filters from DAFX - Zolzer et al."""
@@ -259,9 +263,9 @@ class Zolzer(_BiquadParametric):
 
         K = np.tan(np.pi*f0/self.fs)
 
-        #------------
+        # -----------
         # peak
-        #------------
+        # -----------
         if filtertype == self.Types.peak:
             if gaindb > 0:
                 self._logger.debug('peak boost')
@@ -283,9 +287,9 @@ class Zolzer(_BiquadParametric):
                 a1  = b1
                 a2  = (1 - V0/Q * K + K**2)         / den
 
-        #------------
+        # -----------
         # low shelf
-        #------------
+        # -----------
         elif filtertype == self.Types.lowshelf:
             # Parameter 'Q' is not used
             if gaindb > 0:
@@ -307,9 +311,9 @@ class Zolzer(_BiquadParametric):
                 a1  = (2*(V0*K**2-1))               / den
                 a2  = (1-np.sqrt(2*V0)*K + V0*K**2) / den
 
-        #------------
+        # -----------
         # high shelf
-        #------------
+        # -----------
         elif filtertype == self.Types.highshelf:
             # Parameter 'Q' is not used
             if gaindb > 0:
@@ -330,9 +334,9 @@ class Zolzer(_BiquadParametric):
                 a1  = (2*(((K**2)/V0)-1))               / ( 1+np.sqrt(2/V0)*K + (K**2)/V0)
                 a2  = (1-np.sqrt(2/V0)*K + (K**2)/V0)   / ( 1+np.sqrt(2/V0)*K + (K**2)/V0)
 
-        #------------
+        # -----------
         # low pass
-        #------------
+        # -----------
         elif filtertype == self.Types.lowpass:
             # Parameter 'Q' is not used
             self._logger.debug('lowpass')
@@ -344,9 +348,9 @@ class Zolzer(_BiquadParametric):
             a1  = (2*(K**2-1))              / den
             a2  = (1-np.sqrt(2)*K + K**2)   / den
 
-        #------------
+        # -----------
         # high pass
-        #------------
+        # -----------
         elif filtertype == self.Types.highpass:
             # Parameter 'Q' is not used
             self._logger.debug('highpass')
@@ -363,7 +367,12 @@ class Zolzer(_BiquadParametric):
 
         self.set_coefficients(B=(b0, b1, b2), A=(1.0, a1, a2))
 
-__all__ = ['Biquad', 'RBJ', 'Zolzer',]
+
+__all__ = [
+    'Biquad',
+    'RBJ',
+    'Zolzer',
+    ]
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',

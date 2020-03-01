@@ -18,13 +18,13 @@ import scipy.signal
 from zignal import hz2rad, rad2hz
 
 
-#===================================================================================================
+# ==================================================================================================
 # Linear filter implementations
 #
 # Julius O. Smith III - Introduction to Digital Filters with audio applications
 # https://ccrma.stanford.edu/~jos/fp/
 #
-#===================================================================================================
+# ==================================================================================================
 class Filter(object):
     def __init__(self, B=None, A=None, fs=96000):
         """Standard linear recursive filter
@@ -46,18 +46,18 @@ class Filter(object):
 
     def __str__(self):
         s  = '=======================================\n'
-        s += 'classname        : %s\n'          %self.__class__.__name__
-        s += 'sample rate      : %.1f [Hz]\n'   %self.fs
-        s += 'feedforward  (B) : %s\n'          %str(self._B)
-        s += 'feedback     (A) : %s\n'          %str(self._A)
-        s += 'number of zeros  : %i\n'          %(len(self._B)-1)
-        s += 'number of poles  : %i\n'          %(len(self._A)-1)
-        s += 'minimum phase?   : %s\n'          %("Yes" if self.is_minimum_phase() else "No")
+        s += 'classname        : %s\n'          % self.__class__.__name__
+        s += 'sample rate      : %.1f [Hz]\n'   % self.fs
+        s += 'feedforward  (B) : %s\n'          % str(self._B)
+        s += 'feedback     (A) : %s\n'          % str(self._A)
+        s += 'number of zeros  : %i\n'          % (len(self._B)-1)
+        s += 'number of poles  : %i\n'          % (len(self._A)-1)
+        s += 'minimum phase?   : %s\n'          % ("Yes" if self.is_minimum_phase() else "No")
         s += '-----------------:---------------------\n'
         return s
 
     def __repr__(self):
-        return "Filter(B=%s, A=%s, fs=%s)" %(list(self._B), list(self._A), self.fs)
+        return "Filter(B=%s, A=%s, fs=%s)" % (list(self._B), list(self._A), self.fs)
 
     def filter_samples(self, samples):
         return scipy.signal.lfilter(self._B, self._A, samples, axis=0)
@@ -102,7 +102,7 @@ class Filter(object):
         assert len(self._B) >= 1
 
         a0 = self._A[0]
-        self._logger.debug("normalising using a0: %.4f" %a0)
+        self._logger.debug("normalising using a0: %.4f" % a0)
 
         self._B = self._B/a0
         self._A = self._A/a0
@@ -212,13 +212,13 @@ class Filter(object):
     def plot_pole_zero(self, filename=None):
         """Produce a plot with the location of all poles and zeros."""
         zeros, poles, gain = scipy.signal.tf2zpk(self._B, self._A)
-        self._logger.debug("zeros: %s" %zeros)
-        self._logger.debug("poles: %s" %poles)
-        self._logger.debug("gain : %s" %gain)
+        self._logger.debug("zeros: %s" % zeros)
+        self._logger.debug("poles: %s" % poles)
+        self._logger.debug("gain : %s" % gain)
 
         fig = plt.figure(1)
         ax = fig.add_subplot(111, aspect='equal')
-        circ = plt.Circle((0,0), radius=1, fill=False, color='black',
+        circ = plt.Circle((0, 0), radius=1, fill=False, color='black',
                           linestyle='dashed', linewidth=1.0)
         ax.add_patch(circ)
         ax.axhline(0, linestyle='dashed', color='black', linewidth=1.0)
@@ -226,9 +226,9 @@ class Filter(object):
         ax.grid(True)
 
         ax.plot(poles.real, poles.imag, marker='x', ms=7.0, mew=1.5, mfc='blue', mec='blue',
-                ls='None', label='poles (%i)' %len(poles))
+                ls='None', label='poles (%i)' % len(poles))
         ax.plot(zeros.real, zeros.imag, marker='o', ms=7.0, mew=1.5, mfc='None', mec='red',
-                ls='None', label='zeros (%i)' %len(zeros))
+                ls='None', label='zeros (%i)' % len(zeros))
 
         ax.margins(0.1)
 
@@ -273,6 +273,7 @@ class Filter(object):
             finally:
                 plt.close(1)
 
+
 class FIR(Filter):
     """Finite Impulse Response filter
 
@@ -290,12 +291,13 @@ class FIR(Filter):
     def __str__(self):
         s  = Filter.__str__(self)
         # += '-----------------:---------------------\n'
-        s += 'noise amplf.     : %s\n' %self.noise_amplification()
+        s += 'noise amplf.     : %s\n' % self.noise_amplification()
         return s
 
     def noise_amplification(self):
         '''The noise amplification is the sum of the squares of the coefficients'''
         return np.sum(np.power(self._B, 2))
+
 
 class IIR(Filter):
     """Infinite Impulse Response
@@ -314,20 +316,26 @@ class IIR(Filter):
     def __str__(self):
         s  = Filter.__str__(self)
         # += '-----------------:---------------------\n'
-        s += 'stable?          : %s\n' %("Yes" if self.is_stable() else "No")
+        s += 'stable?          : %s\n' % ("Yes" if self.is_stable() else "No")
         return s
 
-#===================================================================================================
-# Functions
-#===================================================================================================
 
+# ==================================================================================================
+# Functions
+# ==================================================================================================
 def normalised_frequency(f0=1000, fs=96000):
     '''Calculate a normalised frequency between [0.0, 1.0] where 1.0
     corresponds to pi [rad/sample]
     '''
     return f0/(fs/2)
 
-__all__ = ['Filter', 'FIR', 'IIR', 'normalised_frequency',]
+
+__all__ = [
+    'Filter',
+    'FIR',
+    'IIR',
+    'normalised_frequency',
+    ]
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',

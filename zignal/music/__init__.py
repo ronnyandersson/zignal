@@ -10,6 +10,6 @@ Music package
 from . import scales, spn
 
 __all__ = [
-           'scales',
-           'spn',
-           ]
+    'scales',
+    'spn',
+    ]

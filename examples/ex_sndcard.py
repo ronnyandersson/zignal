@@ -29,10 +29,11 @@ def ex_1_play():
     x.append(x2)
     x.convert_to_float(targetbits=32)
 
-    with zignal.sndcard.PA(device_in ='default', device_out='default') as snd:
+    with zignal.sndcard.PA(device_in='default', device_out='default') as snd:
         # using an assert here helps PyDev in eclipse when pressing ctrl+space for autocomplete
         assert isinstance(snd, zignal.sndcard._Device)
         snd.play(x)
+
 
 def ex_2_play():
     # Another way of using a sndcard is by first creating an instance and
@@ -55,6 +56,7 @@ def ex_2_play():
     finally:
         snd.close()
 
+
 def ex_3_play_rec():
     # Play and record at the same time
 
@@ -62,7 +64,7 @@ def ex_3_play_rec():
     x  = zignal.Sinetone(f0=500, fs=fs, duration=1.5, gaindb=-12)
     x.convert_to_float(targetbits=32)
 
-    with zignal.sndcard.PA(device_in ='default', device_out='default') as snd:
+    with zignal.sndcard.PA(device_in='default', device_out='default') as snd:
         # using an assert here helps PyDev in eclipse when pressing ctrl+space for autocomplete
         assert isinstance(snd, (zignal.sndcard.PA))
         y = snd.play_rec(x, frames_per_buffer=32)
@@ -70,11 +72,12 @@ def ex_3_play_rec():
     print(y)
     y.plot()
 
+
 def ex_4_rec():
     # Record
 
     fs = 44100
-    with zignal.sndcard.PA(device_in ='default') as snd:
+    with zignal.sndcard.PA(device_in='default') as snd:
         # using an assert here helps PyDev in eclipse when pressing ctrl+space for autocomplete
         assert isinstance(snd, (zignal.sndcard.PA))
         print("recording...")
@@ -82,6 +85,7 @@ def ex_4_rec():
 
     print(y)
     y.plot()
+
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',

@@ -36,28 +36,28 @@ def key2index(key='A4'):
     valid_chars = "ABCDEFGb#x-0123456789"
 
     for c in key:
-        assert c in valid_chars, "Valid characters are: '%s'" %valid_chars
+        assert c in valid_chars, "Valid characters are: '%s'" % valid_chars
 
     m = re.match(r"(?P<note>^[A-G])(?P<half>b{0,3}|#{0,1}x{0,1})(?P<octave>[\-]?[0-9]+)", key)
     if m is None:
-        raise ValueError("Failed to match key '%s'" %key)
+        raise ValueError("Failed to match key '%s'" % key)
 
     matched = m.groupdict()
 
-    logger.debug("key: %s re: %s" %(key.ljust(4), matched))
+    logger.debug("key: %s re: %s" % (key.ljust(4), matched))
 
     octave  = int(matched.get('octave'))
     note    = matched.get('note')
     half    = matched.get('half')
 
     aug_or_dim = {
-                  'bbb' : -3,
-                  'bb'  : -2,
-                  'b'   : -1,
-                  '#'   :  1,
-                  'x'   :  2,
-                  '#x'  :  3,
-                  }
+        'bbb' : -3,
+        'bb'  : -2,
+        'b'   : -1,
+        '#'   :  1,
+        'x'   :  2,
+        '#x'  :  3,
+        }
 
     octave  = (octave-1)*12
     note    = " C D EF G A B".index(note)
@@ -70,9 +70,10 @@ def key2index(key='A4'):
     # C1      = 4
     pitch = 3 + octave + note + half
 
-    logger.debug("key: %s spn: %i" %(key.ljust(4), pitch))
+    logger.debug("key: %s spn: %i" % (key.ljust(4), pitch))
 
     return pitch
+
 
 def index2key(index=49):
     """Given the SPN index, return the corresponding SPN key
@@ -99,22 +100,23 @@ def index2key(index=49):
     #    C0 --> -8
     #    A0 -->  1
     #    C1 -->  4
-    notes_idx   = (index-3)%12 -1
-    octave      = (index+8)//12
+    notes_idx   = (index - 3) % 12 - 1
+    octave      = (index + 8) // 12
 
     # use the lookup table 'notes' to get the note name
     note        = notes[notes_idx]
 
-    logger.debug("index %3i notes_idx %3i: %s%i" %(index, notes_idx, note, octave))
+    logger.debug("index %3i notes_idx %3i: %s%i" % (index, notes_idx, note, octave))
 
-    spn_key = "%s%i" %(note, octave)
+    spn_key = "%s%i" % (note, octave)
 
     return spn_key
 
+
 __all__ = [
-           'key2index',
-           'index2key',
-           ]
+    'key2index',
+    'index2key',
+    ]
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',

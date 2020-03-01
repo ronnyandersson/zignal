@@ -10,6 +10,6 @@ Filters package
 from . import biquads, linearfilter
 
 __all__ = [
-           'biquads',
-           'linearfilter',
-           ]
+    'biquads',
+    'linearfilter',
+    ]

@@ -20,23 +20,25 @@ from zignal import Audio, Noise
 try:
     import pyaudio
 except ImportError:
-    warnings.warn("PyAudio not found. Will not be able to create sndcard instances", category=ImportWarning)
+    warnings.warn("PyAudio not found. Will not be able to create sndcard instances",
+                  category=ImportWarning)
 
 
 def list_devices():
     """List all available sound cards."""
     return PA.list_devices()
 
-#===================================================================================================
+
+# ==================================================================================================
 # Abstract Base Class, inherit and implement the methods marked as @abstractmethod
-#===================================================================================================
+# ==================================================================================================
 class _Device(object, metaclass=ABCMeta):
     def __init__(self, *args, **kwargs):
         self._logger = logging.getLogger(__name__)
 
     def __str__(self):
         s  = '=======================================\n'
-        s += 'classname        : %s\n' %self.__class__.__name__
+        s += 'classname        : %s\n' % self.__class__.__name__
         return s
 
     def __enter__(self):
@@ -70,9 +72,10 @@ class _Device(object, metaclass=ABCMeta):
         self._logger.debug("--- play_rec")
         assert isinstance(x, Audio)
 
-#===================================================================================================
+
+# ==================================================================================================
 # Stub class
-#===================================================================================================
+# ==================================================================================================
 class Stub(_Device):
     """Stub device that can be dropped in anywhere as a fake sound card.
     The record methods will return noise. This is intended to be used
@@ -103,15 +106,16 @@ class Stub(_Device):
         y = Audio(fs=x.fs, initialdata=n.samples)
         return y
 
-#===================================================================================================
+
+# ==================================================================================================
 # PyAudio (Portaudio) implementation
-#===================================================================================================
+# ==================================================================================================
 class PA(_Device):
     """PyAudio wrapper. Uses the Audio base class as input signal and returns
     Audio instances after a recording. This implementation is using the blocking
     strategy."""
 
-    #--------------------------------------------------------------------------------
+    # -------------------------------------------------------------------------------
     #    Portaudio frame
     #
     #    http://music.columbia.edu/pipermail/portaudio/2007-January/006615.html
@@ -149,7 +153,7 @@ class PA(_Device):
     #    where (rows,colums) --> (samples, channels) this means that each *row*
     #    is a frame.
     #
-    #--------------------------------------------------------------------------------
+    # -------------------------------------------------------------------------------
 
     def __init__(self, device_out='default', device_in='default'):
         """Set the device_out and/or device_in string based on the name of the
@@ -174,11 +178,11 @@ class PA(_Device):
 
     def __str__(self):
         s  = _Device.__str__(self)
-        s += 'portaudio        : %s %s\n'       %(pyaudio.get_portaudio_version(),
-                                                  pyaudio.get_portaudio_version_text())
-        s += 'pyaudio          : %s\n'          %pyaudio.__version__
-        s += 'output device    : id %i, %s\n'   %(self._index_out, self._device_out)
-        s += 'input device     : id %i, %s\n'   %(self._index_in,  self._device_in)
+        s += 'portaudio        : %s %s\n'       % (pyaudio.get_portaudio_version(),
+                                                   pyaudio.get_portaudio_version_text())
+        s += 'pyaudio          : %s\n'          % pyaudio.__version__
+        s += 'output device    : id %i, %s\n'   % (self._index_out, self._device_out)
+        s += 'input device     : id %i, %s\n'   % (self._index_in,  self._device_in)
         return s
 
     def _get_id(self, name=None, find_output=True):
@@ -187,7 +191,7 @@ class PA(_Device):
         pa_get_id = pyaudio.PyAudio()
 
         try:
-            if name=='default':
+            if name == 'default':
                 if find_output:
                     device = pa_get_id.get_default_output_device_info()
                     if device['maxOutputChannels'] > 0:
@@ -217,10 +221,10 @@ class PA(_Device):
             pa_get_id.terminate()
 
         if retval == -1:
-            s = "Device '%s' not found. Check the inputs and outputs arguments" %name
+            s = "Device '%s' not found. Check the inputs and outputs arguments" % name
             print(s)
             try:
-                print("Available devices: \n%s" %self.list_devices())
+                print("Available devices: \n%s" % self.list_devices())
             finally:
                 raise LookupError(s)
 
@@ -264,22 +268,25 @@ class PA(_Device):
         s += '--------------------------------------------------------------------\n'
         s += 'id out  in  def.fs   API            name\n'
         s += '--------------------------------------------------------------------\n'
-        #--->| 0   2   2  44100.0  ALSA           Intel 82801AA-ICH: - (hw:0,0)
+        # -->| 0   2   2  44100.0  ALSA           Intel 82801AA-ICH: - (hw:0,0)
         pa_list_dev = pyaudio.PyAudio()
         try:
             for idx in range(pa_list_dev.get_device_count()):
                 device = pa_list_dev.get_device_info_by_index(idx)
-                s+='%2i %3i %3i %8.1f  %s %s\n' %(
+                s += '%2i %3i %3i %8.1f  %s %s\n' % (
                     device['index'],
                     device['maxOutputChannels'],
                     device['maxInputChannels'],
                     device['defaultSampleRate'],
-                    pa_list_dev.get_host_api_info_by_index(device['hostApi'])['name'].ljust(len('Windows WASAPI')),
+                    pa_list_dev.get_host_api_info_by_index(
+                        device['hostApi'])['name'].ljust(len('Windows WASAPI')),
                     device['name'],
                     )
             s += '\n'
-            s += 'default output device id: %i\n' %pa_list_dev.get_default_output_device_info()['index']
-            s += 'default input  device id: %i\n' %pa_list_dev.get_default_input_device_info()['index']
+            s += 'default output device id: %i\n' \
+                % pa_list_dev.get_default_output_device_info()['index']
+            s += 'default input  device id: %i\n' \
+                % pa_list_dev.get_default_input_device_info()['index']
             s += '--------------------------------------------------------------------\n'
         finally:
             pa_list_dev.terminate()
@@ -306,7 +313,7 @@ class PA(_Device):
             self._logger.debug("pyaudio.paInt32")
             retval = pyaudio.paInt32
         else:
-            raise NotImplementedError("Data type not understood: %s" %x.samples.dtype)
+            raise NotImplementedError("Data type not understood: %s" % x.samples.dtype)
 
         return retval
 
@@ -326,13 +333,12 @@ class PA(_Device):
 
     def _get_missing_frames(self, frames_per_buffer, length):
         """Calculate the number of frames missing to fill a buffer"""
-        missing_frames = frames_per_buffer - (length%frames_per_buffer)
+        missing_frames = frames_per_buffer - (length % frames_per_buffer)
 
-        self._logger.debug("frames per buffer : %i" %frames_per_buffer)
-        self._logger.debug("missing frames    : %i" %missing_frames)
+        self._logger.debug("frames per buffer : %i" % frames_per_buffer)
+        self._logger.debug("missing frames    : %i" % missing_frames)
 
         return missing_frames
-
 
     def play(self, x, frames_per_buffer=1024):
         """Play audio. If dropouts or buffer underruns occur try different
@@ -351,16 +357,17 @@ class PA(_Device):
         cpy = Audio(fs=x.fs, initialdata=x.samples)
         cpy.concat(pad)
 
-        assert len(cpy)%frames_per_buffer == 0
+        assert len(cpy) % frames_per_buffer == 0
 
-        stream = self.pa.open(format                = self._data_format(x),
-                              channels              = x.ch,
-                              rate                  = x.fs,
-                              frames_per_buffer     = frames_per_buffer,
-                              output_device_index   = self._index_out,
-                              input                 = False,
-                              output                = True,
-                              )
+        stream = self.pa.open(
+            format=self._data_format(x),
+            channels=x.ch,
+            rate=x.fs,
+            frames_per_buffer=frames_per_buffer,
+            output_device_index=self._index_out,
+            input=False,
+            output=True,
+            )
         try:
             self._logger.info("play: start")
             counter = 0
@@ -380,9 +387,9 @@ class PA(_Device):
             finally:
                 stream.stop_stream()
 
-            self._logger.debug("chunks played  : %i"    %counter)
-            self._logger.debug("samples played : %i"    %(counter*frames_per_buffer))
-            self._logger.debug("duration       : %.3f"  %(counter*frames_per_buffer/x.fs))
+            self._logger.debug("chunks played  : %i"    % counter)
+            self._logger.debug("samples played : %i"    % (counter*frames_per_buffer))
+            self._logger.debug("duration       : %.3f"  % (counter*frames_per_buffer/x.fs))
 
         finally:
             self._logger.debug("play: close stream")
@@ -407,19 +414,20 @@ class PA(_Device):
         cpy = Audio(fs=x.fs, initialdata=x.samples)
         cpy.concat(pad)
 
-        assert len(cpy)%frames_per_buffer == 0
+        assert len(cpy) % frames_per_buffer == 0
 
         rec = Audio(channels=cpy.ch, fs=cpy.fs, nofsamples=len(cpy), dtype=cpy.samples.dtype)
 
-        stream = self.pa.open(format                = self._data_format(x),
-                              channels              = x.ch,
-                              rate                  = x.fs,
-                              frames_per_buffer     = frames_per_buffer,
-                              input_device_index    = self._index_in,
-                              output_device_index   = self._index_out,
-                              input                 = True,
-                              output                = True,
-                              )
+        stream = self.pa.open(
+            format=self._data_format(x),
+            channels=x.ch,
+            rate=x.fs,
+            frames_per_buffer=frames_per_buffer,
+            input_device_index=self._index_in,
+            output_device_index=self._index_out,
+            input=True,
+            output=True,
+            )
         try:
             self._logger.info("play_rec: start")
             counter = 0
@@ -448,9 +456,9 @@ class PA(_Device):
             finally:
                 stream.stop_stream()
 
-            self._logger.debug("chunks played  : %i"    %counter)
-            self._logger.debug("samples played : %i"    %(counter*frames_per_buffer))
-            self._logger.debug("duration       : %.3f"  %(counter*frames_per_buffer/x.fs))
+            self._logger.debug("chunks played  : %i"    % counter)
+            self._logger.debug("samples played : %i"    % (counter*frames_per_buffer))
+            self._logger.debug("duration       : %.3f"  % (counter*frames_per_buffer/x.fs))
 
         finally:
             self._logger.debug("play_rec: close stream")
@@ -460,7 +468,7 @@ class PA(_Device):
         # at the start, since we can treat that as latency.
         rec.trim(start=missing_frames, end=None)
 
-        self._logger.debug("play_rec: trimmed %i samples from the start" %missing_frames)
+        self._logger.debug("play_rec: trimmed %i samples from the start" % missing_frames)
         self._check_if_clipped(rec)
         self._logger.info("play_rec: done")
 
@@ -479,16 +487,17 @@ class PA(_Device):
 
         rec = Audio(channels=channels, fs=fs, nofsamples=nofsamples, dtype=dtype)
 
-        assert len(rec)%frames_per_buffer == 0
+        assert len(rec) % frames_per_buffer == 0
 
-        stream = self.pa.open(format                = self._data_format(rec),
-                              channels              = rec.ch,
-                              rate                  = rec.fs,
-                              frames_per_buffer     = frames_per_buffer,
-                              input_device_index    = self._index_in,
-                              input                 = True,
-                              output                = False,
-                              )
+        stream = self.pa.open(
+            format=self._data_format(rec),
+            channels=rec.ch,
+            rate=rec.fs,
+            frames_per_buffer=frames_per_buffer,
+            input_device_index=self._index_in,
+            input=True,
+            output=False,
+            )
         try:
             self._logger.info("rec: start")
             counter = 0
@@ -512,9 +521,9 @@ class PA(_Device):
             finally:
                 stream.stop_stream()
 
-            self._logger.debug("chunks recorded : %i" %counter)
-            self._logger.debug("samples recorded: %i" %(counter*frames_per_buffer))
-            self._logger.debug("duration        : %.3f" %(counter*frames_per_buffer/rec.fs))
+            self._logger.debug("chunks recorded : %i" % counter)
+            self._logger.debug("samples recorded: %i" % (counter*frames_per_buffer))
+            self._logger.debug("duration        : %.3f" % (counter*frames_per_buffer/rec.fs))
 
         finally:
             self._logger.debug("rec: close stream")
@@ -524,7 +533,7 @@ class PA(_Device):
         # at the start, since we can treat that as latency.
         rec.trim(start=missing_frames, end=None)
 
-        self._logger.debug("rec: trimmed %i samples from the start" %missing_frames)
+        self._logger.debug("rec: trimmed %i samples from the start" % missing_frames)
         self._check_if_clipped(rec)
         self._logger.info("rec: done")
 
@@ -546,7 +555,7 @@ class PA(_Device):
             # value is max_possible_positive_value+1 (two's complement)
             max_possible_positive_value = 2**((8*dt.itemsize)-1) - 1
 
-        self._logger.debug("maximum possible positive value: %i" %max_possible_positive_value)
+        self._logger.debug("maximum possible positive value: %i" % max_possible_positive_value)
 
         for i, peaks in enumerate(zip(rec.peak()[0], rec.peak()[1])):
             peak_val, peak_pos = peaks
@@ -554,15 +563,16 @@ class PA(_Device):
             if abs(int(peak_val)) >= max_possible_positive_value:
                 clipped = True
                 clip_position = peak_pos/rec.fs
-                self._logger.warn("channel %02i clipped at %.3f" %(i+1, clip_position))
+                self._logger.warn("channel %02i clipped at %.3f" % (i+1, clip_position))
 
         return clipped
 
+
 __all__ = [
-           'list_devices',
-           'PA',
-           'Stub',
-           ]
+    'list_devices',
+    'PA',
+    'Stub',
+    ]
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',

@@ -20,8 +20,8 @@ from zignal import Audio
 class Test_ConvertBackToBack(unittest.TestCase):
     def setUp(self):
         self.x = Audio(fs=10, initialdata=np.zeros((10, 1)))
-        self.x.samples[0] =  -1.0
-        self.x.samples[1] =   1.0
+        self.x.samples[0] = -1.0
+        self.x.samples[1] =  1.0
         print(self.x)
         print(self.x.samples)
         print()
@@ -59,11 +59,12 @@ class Test_ConvertBackToBack(unittest.TestCase):
         self.assertAlmostEqual(self.x.samples[0], -1.0 + q, places=20)
         self.assertAlmostEqual(self.x.samples[1],  1.0 - q, places=20)
 
+
 class Test_ConvertFloatToInt(unittest.TestCase):
     def setUp(self):
         self.x = Audio(fs=10, initialdata=np.zeros((10, 1)))
-        self.x.samples[0] =  -1.0
-        self.x.samples[1] =   1.0
+        self.x.samples[0] = -1.0
+        self.x.samples[1] =  1.0
         print(self.x)
         print(self.x.samples)
         print()
@@ -77,33 +78,34 @@ class Test_ConvertFloatToInt(unittest.TestCase):
 
     def test_int8(self):
         self.convert(targetbits=8)
-        self.assertTrue(self.x.samples.dtype==np.int8)
+        self.assertTrue(self.x.samples.dtype == np.int8)
 
         # 8 bits 2's complement
         # min is -128
         # max is  127
-        self.assertEqual(self.x.samples[0], -127) # must be symmetrical
-        self.assertEqual(self.x.samples[1],  127) # must be symmetrical
+        self.assertEqual(self.x.samples[0], -127)   # must be symmetrical
+        self.assertEqual(self.x.samples[1],  127)   # must be symmetrical
 
     def test_int16(self):
         self.convert(targetbits=16)
-        self.assertTrue(self.x.samples.dtype==np.int16)
+        self.assertTrue(self.x.samples.dtype == np.int16)
 
         # 16 bits 2's complement
         # min is -32768
         # max is  32767
-        self.assertEqual(self.x.samples[0], -32767) # must be symmetrical
-        self.assertEqual(self.x.samples[1],  32767) # must be symmetrical
+        self.assertEqual(self.x.samples[0], -32767)     # must be symmetrical
+        self.assertEqual(self.x.samples[1],  32767)     # must be symmetrical
 
     def test_int32(self):
         self.convert(targetbits=32)
-        self.assertTrue(self.x.samples.dtype==np.int32)
+        self.assertTrue(self.x.samples.dtype == np.int32)
 
         # 32 bits 2's complement
         # min is -2147483648
         # max is  2147483647
-        self.assertEqual(self.x.samples[0], -2147483647) # must be symmetrical
-        self.assertEqual(self.x.samples[1],  2147483647) # must be symmetrical
+        self.assertEqual(self.x.samples[0], -2147483647)    # must be symmetrical
+        self.assertEqual(self.x.samples[1],  2147483647)    # must be symmetrical
+
 
 class Test_ConvertIntToFloat32(unittest.TestCase):
     def convert(self, y, targetbits=None):
@@ -144,14 +146,15 @@ class Test_ConvertIntToFloat32(unittest.TestCase):
         self.convert(x, targetbits=32)
 
         # resolution is lost in this conversion, however we should be close enough.
-        self.assertAlmostEqual(x.samples[0], -1.0, places=20) # exact value
-        self.assertAlmostEqual(x.samples[1],  1.0, places=20) # close enough
+        self.assertAlmostEqual(x.samples[0], -1.0, places=20)   # exact value
+        self.assertAlmostEqual(x.samples[1],  1.0, places=20)   # close enough
+
 
 if __name__ == "__main__":
     noseargs = [__name__,
                 "--verbosity=2",
-                "--logging-format=%(asctime)s %(levelname)-8s: %(name)-15s "+
-                                 "%(module)-15s %(funcName)-20s %(message)s",
+                "--logging-format=%(asctime)s %(levelname)-8s: %(name)-15s " +
+                "%(module)-15s %(funcName)-20s %(message)s",
                 "--logging-level=DEBUG",
                 __file__,
                 ]

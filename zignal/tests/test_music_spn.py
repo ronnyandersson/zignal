@@ -63,7 +63,7 @@ class Test_key2index(unittest.TestCase):
         self.assertRaises(AssertionError,   spn.key2index, 'H4')
 
     def test_C_flat(self):
-        #C-flat and B-sharp issues
+        # C-flat and B-sharp issues
         self.assertEqual(spn.key2index('Cb4'), spn.key2index('B3'))
         self.assertEqual(spn.key2index('B#4'), spn.key2index('C5'))
 
@@ -86,6 +86,7 @@ class Test_key2index(unittest.TestCase):
     def test_regexp_empty(self):
         self.assertRaises(ValueError,       spn.key2index, '')
         self.assertRaises(AssertionError,   spn.key2index, ' ')
+
 
 class Test_index2key(unittest.TestCase):
     def test_known_values(self):
@@ -123,11 +124,12 @@ class Test_index2key(unittest.TestCase):
         self.assertRaises(AssertionError,   spn.index2key,  'A4')
         self.assertRaises(AssertionError,   spn.index2key,  '4')
 
+
 if __name__ == "__main__":
     noseargs = [__name__,
                 "--verbosity=2",
-                "--logging-format=%(asctime)s %(levelname)-8s: %(name)-15s "+
-                                 "%(module)-15s %(funcName)-20s %(message)s",
+                "--logging-format=%(asctime)s %(levelname)-8s: %(name)-15s " +
+                "%(module)-15s %(funcName)-20s %(message)s",
                 "--logging-level=DEBUG",
                 __file__,
                 ]

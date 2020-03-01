@@ -15,9 +15,9 @@ from .audio import *    # isort:skip
 from . import filters, measure, music, sndcard
 
 __all__ = [
-           'filters',
-           'measure',
-           'music',
-           'sndcard',
-           ]
+    'filters',
+    'measure',
+    'music',
+    'sndcard',
+    ]
 __all__.extend(audio.__all__)       #@UndefinedVariable

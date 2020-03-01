@@ -21,18 +21,20 @@ from zignal.filters.biquads import RBJ
 from zignal.filters.linearfilter import Filter
 
 # expose the measure.mlstaps.TAPS dictionary in the measure.mls namespace
-from .mlstaps import *  # isort:skip
+from .mlstaps import TAPS  # isort:skip
 
 __all__ = [
-           'MLS',
-           'MLS_simple',
-           'get_random_taps',
-           'TAPS',
-           ]
+    'MLS',
+    'MLS_simple',
+    'get_random_taps',
+    'TAPS',
+    ]
+
 
 def get_random_taps(N):
     '''Select a random set of taps for given order N'''
     return random.choice(TAPS.get(N))
+
 
 class _MLS_base(object):
     '''Base class for Maximum Length Sequence (MLS) generation. This class
@@ -60,7 +62,7 @@ class _MLS_base(object):
     * Extraction of the impulse response
     '''
     def __init__(self, N=None, taps=None):
-        assert N    is not None, "Please specify MLS order"
+        assert N is not None, "Please specify MLS order"
         assert taps is not None, "Please specify feedback taps"
         assert isinstance(taps, (tuple, list))
         assert len(taps) != 0, "taps are empty!"
@@ -71,18 +73,18 @@ class _MLS_base(object):
         self.taps       = taps
 
         sizeof_int = np.int64().dtype.itemsize
-        self._RAM_usage = (self.L*sizeof_int)/(1024**2) # in Mb
+        self._RAM_usage = (self.L*sizeof_int)/(1024**2)     # in Mb
 
     def __repr__(self):
-        return '_MLS_base(N=%i, taps=%s)' %(self.N, tuple(self.taps))
+        return '_MLS_base(N=%i, taps=%s)' % (self.N, tuple(self.taps))
 
     def __str__(self):
         s  = '=======================================\n'
-        s += 'classname        : %s\n'      %self.__class__.__name__
-        s += 'N                : %i\n'      %self.N
-        s += 'L=(2^N)-1        : %i\n'      %self.L
-        s += 'taps             : %s\n'      %str(self.taps)
-        s += "RAM              : %.1f [Mb] (one full sequence)\n" %self._RAM_usage
+        s += 'classname        : %s\n'      % self.__class__.__name__
+        s += 'N                : %i\n'      % self.N
+        s += 'L=(2^N)-1        : %i\n'      % self.L
+        s += 'taps             : %s\n'      % str(self.taps)
+        s += "RAM              : %.1f [Mb] (one full sequence)\n" % self._RAM_usage
         s += '-----------------:---------------------\n'
         return s
 
@@ -160,8 +162,8 @@ class _MLS_base(object):
         chunkgen        = self.generator_samples(chunk=self.L)
         full_sequence   = next(chunkgen)
         reps_sequence   = np.tile(full_sequence.T, repeats).T
-        self._logger.debug("May share memory: %s" %np.may_share_memory(full_sequence,
-                                                                       reps_sequence))
+        self._logger.debug("May share memory: %s" % np.may_share_memory(full_sequence,
+                                                                        reps_sequence))
         return reps_sequence
 
     def xcorr_circular(self, other):
@@ -210,31 +212,46 @@ class _MLS_base(object):
         # equivalent to the correlation method. There might be some small (insignificant)
         # rounding errors but for a large array this should not be noticable.
         #
-        ### Flip comments to verify that correlation and convolution (with input flip) is
-        ### the same. Be careful, long sequences are slow to calculate using the
-        ### correlation method.
+        # ** Flip comments to verify that correlation and convolution (with input flip) is
+        # ** the same. Be careful, long sequences are slow to calculate using the
+        # ** correlation method.
         #xcorr   = scipy.signal.correlate(ref, other)
         xcorr = scipy.signal.fftconvolve(np.flipud(ref), other)
 
-        self._logger.debug("ref: %s" %np.array_str(ref.T,     max_line_width=200, precision=4, suppress_small=True))
-        self._logger.debug("xc : %s" %np.array_str(xcorr.T,   max_line_width=200, precision=4, suppress_small=True))
+        self._logger.debug("ref: %s" % np.array_str(
+            ref.T,      max_line_width=200, precision=4, suppress_small=True))
+        self._logger.debug("xc : %s" % np.array_str(
+            xcorr.T,    max_line_width=200, precision=4, suppress_small=True))
 
         del ref
 
         # slicing creates views which are cheap (points to the same array)
         x1 = xcorr[self.L:]         # right half (end)
         x2 = xcorr[:self.L-1]       # left halt (start)
-        self._logger.debug("x1 : %s" %np.array_str(x1.T,      max_line_width=200, precision=4, suppress_small=True))
-        self._logger.debug("x2 : %s" %np.array_str(x2.T,      max_line_width=200, precision=4, suppress_small=True))
 
-        x1[:]=x1+x2                 # assume circular sequence
-        self._logger.debug("xc : %s" %np.array_str(xcorr.T,   max_line_width=200, precision=4, suppress_small=True))
+        self._logger.debug("x1 : %s" % np.array_str(
+            x1.T,       max_line_width=200, precision=4, suppress_small=True))
 
-        norm = xcorr[self.L-1:]     # extract "impulse" + tail (right half)
-        self._logger.debug("nrm: %s" %np.array_str(norm.T,    max_line_width=200, precision=4, suppress_small=True))
+        self._logger.debug("x2 : %s" % np.array_str(
+            x2.T,       max_line_width=200, precision=4, suppress_small=True))
 
-        norm[:] = norm/self.L       # normalise so that max <= 1.0
-        self._logger.debug("nrm: %s" %np.array_str(norm.T,    max_line_width=200, precision=4, suppress_small=True))
+        # assume circular sequence
+        x1[:] = x1+x2
+
+        self._logger.debug("xc : %s" % np.array_str(
+            xcorr.T,    max_line_width=200, precision=4, suppress_small=True))
+
+        # extract "impulse" + tail (right half)
+        norm = xcorr[self.L-1:]
+
+        self._logger.debug("nrm: %s" % np.array_str(
+            norm.T,     max_line_width=200, precision=4, suppress_small=True))
+
+        # normalise so that max <= 1.0
+        norm[:] = norm/self.L
+
+        self._logger.debug("nrm: %s" % np.array_str(
+            norm.T,     max_line_width=200, precision=4, suppress_small=True))
 
         return norm
 
@@ -265,7 +282,7 @@ class _MLS_base(object):
 
         # throw away first full sequence
         trimmed = other[self.L:]
-        self._logger.debug("May share memory: %s" %np.may_share_memory(other, trimmed))
+        self._logger.debug("May share memory: %s" % np.may_share_memory(other, trimmed))
         #print(repr(trimmed))
         # data is [[B_1],
         #          [B_2],
@@ -275,20 +292,20 @@ class _MLS_base(object):
         #          [C_3]]
 
         repeats = len(trimmed)//self.L
-        self._logger.debug("repeats (first discared): %i" %repeats)
+        self._logger.debug("repeats (first discared): %i" % repeats)
 
         # reshape so we can average
         reshaped = trimmed.reshape((repeats, self.L))
         # data is [[B_1, B_2, B_3],
         #          [C_1, C_2, C_3]]
 
-        self._logger.debug("May share memory: %s" %np.may_share_memory(other, reshaped))
+        self._logger.debug("May share memory: %s" % np.may_share_memory(other, reshaped))
         #print(repr(reshaped))
 
         # the averaging finally creates a new array that has it's own data
         average = np.average(reshaped, axis=0)
 
-        average = np.expand_dims(average, axis=1) # up the ndim to 2
+        average = np.expand_dims(average, axis=1)   # up the ndim to 2
         # data is [[X_1],
         #          [X_2],
         #          [X_3]]
@@ -309,6 +326,7 @@ class _MLS_base(object):
         impulse = self.xcorr_circular(avg)
 
         return impulse
+
 
 class MLS(_MLS_base, Audio):
     """This class is a mixture of the MLS base class and the Audio class. The MLS data
@@ -345,7 +363,7 @@ class MLS(_MLS_base, Audio):
         self.repeats            = repeats
         self._length_impresp    = self.L/self.fs
         self._filter_emphasis   = Filter(B=B, A=A, fs=self.fs)
-        self._filter_deemphasis = Filter(B=A, A=B, fs=self.fs) # inverse filter
+        self._filter_deemphasis = Filter(B=A, A=B, fs=self.fs)  # inverse filter
 
         assert self._filter_emphasis.is_minimum_phase(), \
             "The emphasis filter must be minimum phase, i.e. possible to invert"
@@ -354,7 +372,7 @@ class MLS(_MLS_base, Audio):
         B, A = self._filter_emphasis.get_coefficients()
 
         s = 'MLS(N=%i, taps=%s, fs=%r, repeats=%i, B=%s, A=%s)' \
-            %(self.N, tuple(self.taps), self.fs, self.repeats, tuple(B), tuple(A))
+            % (self.N, tuple(self.taps), self.fs, self.repeats, tuple(B), tuple(A))
 
         return s
 
@@ -365,11 +383,11 @@ class MLS(_MLS_base, Audio):
         mls_string = "\n".join(mls_string.splitlines()[2:-1])
 
         s  = Audio.__str__(self)
-        s += '%s\n'                             %mls_string
-        s += 'repeats          : %i\n'          %self.repeats
-        s += 'len(impulse)     : %.3f [s]\n'    %self._length_impresp
-        s += 'emphasis filt. B : %s\n'          %str(B)
-        s += 'emphasis filt. A : %s\n'          %str(A)
+        s += '%s\n'                             % mls_string
+        s += 'repeats          : %i\n'          % self.repeats
+        s += 'len(impulse)     : %.3f [s]\n'    % self._length_impresp
+        s += 'emphasis filt. B : %s\n'          % str(B)
+        s += 'emphasis filt. A : %s\n'          % str(A)
         return s
 
     def apply_emphasis(self):
@@ -394,6 +412,7 @@ class MLS(_MLS_base, Audio):
         imp = _MLS_base.get_impulse(self, x)
         y   = Audio(fs=self.fs, initialdata=imp)
         return y
+
 
 class MLS_simple(object):
     def __init__(self, N=16, fs=96000, repeats=3):
@@ -420,7 +439,7 @@ class MLS_simple(object):
         self.samples = self._mls.samples
 
     def __repr__(self):
-        s = 'MLS_simple(N=%i fs=%r, repeats=%i)' %(self._mls.N, self._mls.fs, self._mls.repeats)
+        s = 'MLS_simple(N=%i fs=%r, repeats=%i)' % (self._mls.N, self._mls.fs, self._mls.repeats)
         return s
 
     def __str__(self):
@@ -428,8 +447,8 @@ class MLS_simple(object):
         mls_string = "\n".join(mls_string.splitlines()[2:])
 
         s  = '=======================================\n'
-        s += 'classname        : %s\n'      %self.__class__.__name__
-        s += '%s' %str(mls_string)
+        s += 'classname        : %s\n'      % self.__class__.__name__
+        s += '%s' % str(mls_string)
         return s
 
     def get_impulse(self, x):
@@ -446,6 +465,7 @@ class MLS_simple(object):
         # that would scale the impulse wrong.
         self._impulseresponse.plot_fft(plotname=plotname, window='rectangular', normalise=False)
 
+
 if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',
                         level='DEBUG')
@@ -461,7 +481,7 @@ if __name__ == '__main__':
 
     mls = MLS_simple(N=N, fs=fs, repeats=4)
 
-    print (repr(mls))
+    print(repr(mls))
     print(mls)
 
     y = mls.get_impulse(mls.samples)

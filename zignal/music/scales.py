@@ -32,6 +32,7 @@ def equal_temperament(n):
 
     return ratio
 
+
 def piano_key2freq(n, a=49, tuning=440):
     """Twelve-tone equal temperament tuning for a theoretically ideal piano.
 
@@ -49,6 +50,7 @@ def piano_key2freq(n, a=49, tuning=440):
 
     return frequency
 
+
 def piano_freq2key(f, a=49, tuning=440, quantise=False):
     """Frequency [f] to twelve-tone equal temperament tuning for a theoretically
     ideal piano, where 440Hz-->49
@@ -61,6 +63,7 @@ def piano_freq2key(f, a=49, tuning=440, quantise=False):
 
     return key
 
+
 def piano_note2freq(note, tuning=440):
     """Convert a piano note like 'C4' to 12TET frequency 261.6 Hz"""
     idx  = spn.key2index(note)
@@ -68,12 +71,14 @@ def piano_note2freq(note, tuning=440):
 
     return freq
 
+
 def piano_freq2note(f, tuning=440):
     """Given frequency f, calculate the nearest note in 12TET SPN notation"""
     idx = piano_freq2key(f, tuning=tuning, quantise=True)
     key = spn.index2key(idx)
 
     return key
+
 
 def midi_key2freq(n, tuning=440):
     """MIDI Tuning Standard. Convert midi note n to frequency f [Hz]. MIDI note 69
@@ -85,6 +90,7 @@ def midi_key2freq(n, tuning=440):
     frequency = piano_key2freq(n, a=69, tuning=tuning)
 
     return frequency
+
 
 def midi_freq2key(f, tuning=440, quantise=False):
     """ MIDI Tuning Standard. Convert frequency f [Hz] to a midi note. MIDI note 69
@@ -99,15 +105,16 @@ def midi_freq2key(f, tuning=440, quantise=False):
 
     return midinote
 
+
 __all__ = [
-           'equal_temperament',
-           'piano_key2freq',
-           'piano_freq2key',
-           'piano_note2freq',
-           'piano_freq2note',
-           'midi_key2freq',
-           'midi_freq2key',
-           ]
+    'equal_temperament',
+    'piano_key2freq',
+    'piano_freq2key',
+    'piano_note2freq',
+    'piano_freq2note',
+    'midi_key2freq',
+    'midi_freq2key',
+    ]
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',

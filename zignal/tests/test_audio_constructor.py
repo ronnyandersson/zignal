@@ -44,6 +44,7 @@ class Test_EmptyConstructor(unittest.TestCase):
 
         self.assertSequenceEqual(self.x.comment(), s)
 
+
 class Test_ConstructorChannels(unittest.TestCase):
     def setUp(self):
         self.x = Audio(channels=4)
@@ -65,11 +66,12 @@ class Test_ConstructorChannels(unittest.TestCase):
         print(peak)
         print(idx)
         self.assertTrue(np.isnan(peak).all())
-        self.assertTrue((idx==0).all())
+        self.assertTrue((idx == 0).all())
 
     def test_crestfactor_is_nan(self):
         print(self.x.crest_factor())
         self.assertTrue(np.isnan(self.x.crest_factor()).all())
+
 
 class Test_ConstructorDuration(unittest.TestCase):
     def test_set_samples(self):
@@ -90,11 +92,12 @@ class Test_ConstructorDuration(unittest.TestCase):
     def test_set_duration_and_samples(self):
         self.assertRaises(AssertionError, callableObj=Audio, nofsamples=10, duration=1.1)
 
+
 if __name__ == "__main__":
     noseargs = [__name__,
                 "--verbosity=2",
-                "--logging-format=%(asctime)s %(levelname)-8s: %(name)-15s "+
-                                 "%(module)-15s %(funcName)-20s %(message)s",
+                "--logging-format=%(asctime)s %(levelname)-8s: %(name)-15s " +
+                "%(module)-15s %(funcName)-20s %(message)s",
                 "--logging-level=DEBUG",
                 __file__,
                 ]

@@ -44,6 +44,7 @@ class Test_back_to_back(unittest.TestCase):
         self.assertAlmostEqual(x[0],    1.234567,               places=6)
         self.assertAlmostEqual(x[1],                2.345678,   places=6)
 
+
 class Test_lin_to_db_known_values(unittest.TestCase):
     def test_known_value_1(self):
         x = lin2db(1)
@@ -65,6 +66,7 @@ class Test_lin_to_db_known_values(unittest.TestCase):
         x = lin2db(0.0)
         self.assertTrue(np.isneginf(x))
 
+
 class Test_db_to_lin_known_values(unittest.TestCase):
     def test_known_value_0(self):
         x = db2lin(0)
@@ -75,7 +77,7 @@ class Test_db_to_lin_known_values(unittest.TestCase):
         self.assertAlmostEqual(x, 0.1, places=6)
 
     def test_known_value_neg6(self):
-        x = db2lin(-6) # -6.020599913
+        x = db2lin(-6)  # -6.020599913
         self.assertAlmostEqual(x, 0.5, places=2)
 
     def test_known_value_6(self):
@@ -85,6 +87,7 @@ class Test_db_to_lin_known_values(unittest.TestCase):
     def test_known_value_neg_inf(self):
         x = db2lin(float('-inf'))
         self.assertAlmostEqual(x,  0.0, places=6)
+
 
 class Test_pow_to_db_known_values(unittest.TestCase):
     def test_known_value_1(self):
@@ -107,6 +110,7 @@ class Test_pow_to_db_known_values(unittest.TestCase):
         x = pow2db(0.0)
         self.assertTrue(np.isneginf(x))
 
+
 class Test_db_to_pow_known_values(unittest.TestCase):
     def test_known_value_0(self):
         x = db2pow(0)
@@ -127,6 +131,7 @@ class Test_db_to_pow_known_values(unittest.TestCase):
     def test_known_value_neg_10(self):
         x = db2pow(-10)
         self.assertAlmostEqual(x, 0.1, places=2)
+
 
 class Test_lin_to_db_input_datatypes(unittest.TestCase):
     def test_single(self):
@@ -164,6 +169,7 @@ class Test_lin_to_db_input_datatypes(unittest.TestCase):
         self.assertTrue((x <  0.0001).all())
         self.assertTrue((x > -0.0001).all())
 
+
 class Test_db_to_lin_input_datatypes(unittest.TestCase):
     def test_single(self):
         x = db2lin(0)
@@ -200,11 +206,12 @@ class Test_db_to_lin_input_datatypes(unittest.TestCase):
         self.assertTrue((x < 1.0001).all())
         self.assertTrue((x > 0.9999).all())
 
+
 if __name__ == "__main__":
     noseargs = [__name__,
                 "--verbosity=2",
-                "--logging-format=%(asctime)s %(levelname)-8s: %(name)-15s "+
-                                 "%(module)-15s %(funcName)-20s %(message)s",
+                "--logging-format=%(asctime)s %(levelname)-8s: %(name)-15s " +
+                "%(module)-15s %(funcName)-20s %(message)s",
                 "--logging-level=DEBUG",
                 __file__,
                 ]
