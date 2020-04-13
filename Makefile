@@ -1,19 +1,19 @@
 all: check
 
 .PHONY: check
-check: isort flake8
+check: isort flake8 test
 
 .PHONY: isort
 isort:
+	isort zignal/*.py zignal/**/*.py examples/*.py --check-only
 	@echo ""
-	@echo "*** Running isort, check-only"
-	@echo ""
-	isort zignal/**/*.py --check-only
-	isort examples/*.py --check-only
 
 .PHONY: flake8
 flake8:
+	flake8 --extend-ignore=E265 --statistics zignal/ examples/
 	@echo ""
-	@echo "*** Running flake8"
+
+.PHONY: test
+test:
+	nosetests
 	@echo ""
-	flake8 --extend-ignore=E265 --statistics zignal/
