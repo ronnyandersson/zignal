@@ -193,6 +193,59 @@ class Audio(object):
         self.nofsamples = len(self.samples)
         self._set_duration()
 
+    def iter_chunks(self, chunksize=1024):
+        """
+        Splits the audio samples into chunks, to iterate over in block-based
+        processing. There are no restrictions on the chunk size, but in
+        practical implementations it is usually a power of two. This is not
+        a requirement here.
+
+        Chunks are sometimes called blocks, this is the same. So chunksize is
+        the same as blocksize.
+        """
+
+        chunks  = len(self.samples) // chunksize
+        missing = len(self.samples) % chunksize
+        self._logger.debug("chunksize        : %i", chunksize)
+        self._logger.debug("data shape       : %s", self.samples.shape)
+        self._logger.debug("chunks pre pad   : %i", chunks)
+        self._logger.debug("missing (modulo) : %i", missing)
+
+        # If the data doesn't add up to a full chunk we need to pad with zeros but
+        # first we need to calculate how many samples are missing for a full chunk.
+        if missing:
+            missing_samples = chunksize - missing
+            self._logger.debug("missing (samples): %s", missing_samples)
+
+            # Pad with zeros, assuming that all channels are equally long in the
+            # first place. A new array is created since the original data should
+            # be kept unchanged. This means that this iterator is not very memory
+            # efficient. This can be avoided if the data is padded to add up to
+            # a multiple of the chunksize before this method is called. If this is
+            # acceptable (changing the original data) then this iterator is very
+            # memory efficient since only a new view of the original data is
+            # created (if possible, not guaranteed)
+            padded = np.concatenate([self.samples, np.zeros((missing_samples, self.ch))])
+            self._logger.debug("padded shape     : %s", padded.shape)
+
+        else:
+            # Here the audio samples adds up to a multiple of the chunksize
+            self._logger.debug("*** No padding is needed")
+            padded = self.samples
+
+        padded_chunks = len(padded) // chunksize
+
+        self._logger.info("chunks (total)   : %i", padded_chunks)
+
+        reshape = padded.reshape((padded_chunks, chunksize, self.ch))
+
+        # Now finally iterate over all the chunks
+        for i in range(padded_chunks):
+            curr_start  = chunksize*i
+            curr_stop   = curr_start + chunksize - 1
+            self._logger.debug("current slice    : %10i %10i", curr_start, curr_stop)
+            yield reshape[i]
+
     def is_empty(self):
         """Check if all samples in all channels are zero, then file is empty."""
         return np.all(self.samples == 0)
@@ -1142,7 +1195,10 @@ __all__ = [
     ]
 
 if __name__ == '__main__':
-    logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',
-                        level='DEBUG')
+    logging.basicConfig(
+        format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',
+        level='DEBUG',
+        )
+    logging.getLogger("matplotlib").setLevel(logging.INFO)
 
     print('-- Done --')
