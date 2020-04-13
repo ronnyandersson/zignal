@@ -21,7 +21,7 @@ class Test_ConvertBackToBack(unittest.TestCase):
     def setUp(self):
         self.x = Audio(fs=10, initialdata=np.zeros((10, 1)))
         self.x.samples[0] = -1.0
-        self.x.samples[1] =  1.0
+        self.x.samples[1] =  1.0                                            # noqa: E222
         print(self.x)
         print(self.x.samples)
         print()
@@ -64,7 +64,7 @@ class Test_ConvertFloatToInt(unittest.TestCase):
     def setUp(self):
         self.x = Audio(fs=10, initialdata=np.zeros((10, 1)))
         self.x.samples[0] = -1.0
-        self.x.samples[1] =  1.0
+        self.x.samples[1] =  1.0                                            # noqa: E222
         print(self.x)
         print(self.x.samples)
         print()
@@ -121,7 +121,7 @@ class Test_ConvertIntToFloat32(unittest.TestCase):
     def test_int8(self):
         x = Audio(fs=10, initialdata=np.zeros((10, 1), dtype=np.int8))
         x.samples[0] = -128
-        x.samples[1] =  127
+        x.samples[1] =  127                                                 # noqa: E222
 
         self.convert(x, targetbits=32)
 
@@ -131,7 +131,7 @@ class Test_ConvertIntToFloat32(unittest.TestCase):
     def test_int16(self):
         x = Audio(fs=10, initialdata=np.zeros((10, 1), dtype=np.int16))
         x.samples[0] = -32768
-        x.samples[1] =  32767
+        x.samples[1] =  32767                                               # noqa: E222
 
         self.convert(x, targetbits=32)
 
@@ -141,7 +141,7 @@ class Test_ConvertIntToFloat32(unittest.TestCase):
     def test_int32(self):
         x = Audio(fs=10, initialdata=np.zeros((10, 1), dtype=np.int32))
         x.samples[0] = -2147483648
-        x.samples[1] =  2147483647
+        x.samples[1] =  2147483647                                          # noqa: E222
 
         self.convert(x, targetbits=32)
 

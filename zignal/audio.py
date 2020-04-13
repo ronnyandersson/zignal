@@ -710,7 +710,7 @@ class Audio(object):
             "Only the Triangular Probability Density Function is implemented"
 
         # Triangular Probability Density Function
-        noise = np.random.triangular(-1, 0, 1, self.samples.shape)
+        #noise = np.random.triangular(-1, 0, 1, self.samples.shape)
 
     def decimate(self, N):
         """

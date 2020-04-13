@@ -35,15 +35,15 @@ class Test_single_channel(unittest.TestCase):
         self.assertEqual(idx, position)
 
     def test_positive(self):
-        self.y[1] =  2.0
-        self.y[2] =  2.2    # <-- peak
+        self.y[1] =  2.0                            # noqa: E222
+        self.y[2] =  2.2    # <-- peak              # noqa: E222
         self.y[3] = -1.2
         print("init data: %s" % self.y)
         self.check_values(self.y, 2.2, 2)
 
     def test_negative(self):
-        self.y[1] =  2.0
-        self.y[2] =  3.19
+        self.y[1] =  2.0                            # noqa: E222
+        self.y[2] =  3.19                           # noqa: E222
         self.y[3] = -3.2    # <-- peak
         print("init data: %s" % self.y)
         self.check_values(self.y, -3.2, 3)
@@ -70,20 +70,20 @@ class Test_multi_channel(unittest.TestCase):
         self.assertEqual(idx[1], position[1])
 
     def test_positive(self):
-        self.y[1][0] =  1.0
-        self.y[2][0] =  2.3     # <-- peak
+        self.y[1][0] =  1.0                         # noqa: E222
+        self.y[2][0] =  2.3     # <-- peak          # noqa: E222
 
         self.y[1][1] = -4.1     # <-- peak
-        self.y[2][1] =  3.0
+        self.y[2][1] =  3.0                         # noqa: E222
         print(self.y)
         self.check_values(self.y, [2.3, -4.1], [2, 1])
 
     def test_negative(self):
-        self.y[1][0] =  1.0
-        self.y[2][0] =  2.0     # <-- peak
+        self.y[1][0] =  1.0                         # noqa: E222
+        self.y[2][0] =  2.0     # <-- peak          # noqa: E222
 
         self.y[0][1] = -4.0     # <-- peak
-        self.y[1][1] =  3.0
+        self.y[1][1] =  3.0                         # noqa: E222
         print(self.y)
         self.check_values(self.y, [2, -4], [2, 0])
 

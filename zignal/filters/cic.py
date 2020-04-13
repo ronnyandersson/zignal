@@ -55,7 +55,9 @@ def cic(N=1, D=10, f=None):
 
 if __name__ == '__main__':
     logging.basicConfig(
-        format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s', level='DEBUG')
+        format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',
+        level='DEBUG',
+        )
     logging.getLogger("matplotlib").setLevel(logging.INFO)
 
     # Demo plot, 1st to 4th order cic filters with decimation set to 10

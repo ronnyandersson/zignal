@@ -23,22 +23,22 @@ class Test_back_to_back(unittest.TestCase):
         self.assertAlmostEqual(x,       1.234567,  places=6)
 
     def test_lin_to_db_to_lin(self):
-        x = lin2db(db2lin(              1.234567))
+        x = lin2db(db2lin(              1.234567))                              # noqa: E201
         self.assertAlmostEqual(x,       1.234567,  places=6)
 
     def test_pow_to_db_to_pow(self):
-        x = pow2db(db2pow(              1.234567))
+        x = pow2db(db2pow(              1.234567))                              # noqa: E201
         self.assertAlmostEqual(x,       1.234567,  places=6)
 
     def test_lin_to_db_to_lin_arrays(self):
-        x = lin2db(db2lin((             1.234567,   2.345678)))
+        x = lin2db(db2lin((             1.234567,   2.345678)))                 # noqa: E201
         self.assertEqual(x.ndim, 1)
         self.assertEqual(len(x), 2)
         self.assertAlmostEqual(x[0],    1.234567,               places=6)
         self.assertAlmostEqual(x[1],                2.345678,   places=6)
 
     def test_pow_to_db_to_pow_arrays(self):
-        x = pow2db(db2pow((             1.234567,   2.345678)))
+        x = pow2db(db2pow((             1.234567,   2.345678)))                 # noqa: E201
         self.assertEqual(x.ndim, 1)
         self.assertEqual(len(x), 2)
         self.assertAlmostEqual(x[0],    1.234567,               places=6)
@@ -154,19 +154,19 @@ class Test_lin_to_db_input_datatypes(unittest.TestCase):
     def test_np_ndim_1(self):
         x = lin2db(np.ones(10))
         self.assertEqual(x.ndim, 1)
-        self.assertTrue((x <  0.0001).all())
+        self.assertTrue((x <  0.0001).all())                    # noqa: E222
         self.assertTrue((x > -0.0001).all())
 
     def test_np_ndim_2_10x4(self):
         x = lin2db(np.ones((10, 4)))
         self.assertEqual(x.ndim, 2)
-        self.assertTrue((x <  0.0001).all())
+        self.assertTrue((x <  0.0001).all())                    # noqa: E222
         self.assertTrue((x > -0.0001).all())
 
     def test_np_ndim_2_4x10(self):
         x = lin2db(np.ones((4, 10)))
         self.assertEqual(x.ndim, 2)
-        self.assertTrue((x <  0.0001).all())
+        self.assertTrue((x <  0.0001).all())                    # noqa: E222
         self.assertTrue((x > -0.0001).all())
 
 
