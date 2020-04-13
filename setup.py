@@ -64,6 +64,8 @@ setup(
                            'cascaded',
                            'integrator',
                            'comb',
+                           'decimation',
+                           'decimator',
                            'parametric',
                            'eq',
                            'equaliser',

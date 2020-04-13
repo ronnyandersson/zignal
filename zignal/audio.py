@@ -712,6 +712,29 @@ class Audio(object):
         # Triangular Probability Density Function
         noise = np.random.triangular(-1, 0, 1, self.samples.shape)
 
+    def decimate(self, N):
+        """
+        Throw away samples. Keep every Nth sample.
+
+        Converts **IN PLACE**
+
+        This is half of a downsampler. The other half would be to make sure
+        that the sampling theorem isn't violated for the new sample rate. So
+        the appropriate low pass filtering has to be done on the audio before
+        this metod is called, otherwise aliasing might occur.
+        """
+
+        self._logger.debug("decimate by factor N: %i", N)
+
+        # Use the slice operator. Efficient and fast. Will silently ignore the
+        # last incomplete chunk; for example 100 decimated by 3 leaves 1
+        # sample at the end that cannot be used.
+        self.samples = self.samples[::N]
+        self._logger.debug("decimated: %s", self.samples.shape)
+
+        self.nofsamples = len(self.samples)
+        self.set_sample_rate(self.fs/N)
+
     def resample(self, targetrate=8000, converter_type="sinc_best"):
         """Use the python bindings for the Secret Rabbit Code library
         (aka libsamplerate) to perform sample rate conversion.
