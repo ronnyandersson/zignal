@@ -59,7 +59,7 @@ def piano_freq2key(f, a=49, tuning=440, quantise=False):
     key = 12*np.log2(f/tuning) + a
 
     if quantise:
-        key = np.int(np.round(key))
+        key = int(np.round(key))
 
     return key
 
