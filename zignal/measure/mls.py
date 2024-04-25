@@ -467,8 +467,14 @@ class MLS_simple(object):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',
-                        level='DEBUG')
+    logging.basicConfig(
+        format="%(levelname)-8s: %(module)s.%(funcName)-15s %(message)s",
+        level="DEBUG",
+        )
+    # some libraries are noisy in DEBUG
+    logging.getLogger("matplotlib").setLevel(logging.INFO)
+    logging.getLogger("PIL").setLevel(logging.WARNING)
+
     fs  = 48000*2
     N   = 13
 

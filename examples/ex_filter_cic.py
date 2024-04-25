@@ -18,9 +18,12 @@ import zignal
 
 if __name__ == '__main__':
     logging.basicConfig(
-        format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',
-        level='DEBUG')
+        format="%(levelname)-8s: %(module)s.%(funcName)-15s %(message)s",
+        level="DEBUG",
+        )
+    # some libraries are noisy in DEBUG
     logging.getLogger("matplotlib").setLevel(logging.INFO)
+    logging.getLogger("PIL").setLevel(logging.WARNING)
 
     # Create an FIR filter with n coefficients set to 1/n
     # Plot this and compare it with a cic filter with D=n
