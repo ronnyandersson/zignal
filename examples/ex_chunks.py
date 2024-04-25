@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
     # Create various ramp signals, to visualise the chunks better. Not real
     # audio, but shows in a plot what the chunks look like
-    a1 = zignal.Audio(fs=fs, initialdata=np.linspace(0, 1,  num=(1000/2)))
+    a1 = zignal.Audio(fs=fs, initialdata=np.linspace(0, 1,  num=(1000//2)))
     a2 = zignal.Audio(fs=fs, initialdata=np.linspace(0, -1, num=(1000*1)+500))
     a3 = zignal.Audio(fs=fs, initialdata=np.linspace(0, 1,  num=(1000*2)+200))
 
