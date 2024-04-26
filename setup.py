@@ -23,7 +23,6 @@ setup(
                            'numpy',
                            'scipy',
                            'matplotlib',
-                           'samplerate',
                            ],
     extras_require      = {
                            'sndcard': ['pyaudio'],
