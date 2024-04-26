@@ -112,6 +112,7 @@ class Audio(object):
         s += 'datatype         : %s\n'          % self.samples.dtype
         s += 'samples per ch   : %i\n'          % self.nofsamples
         s += 'data size        : %.3f [Mb]\n'   % (self.samples.nbytes/(1024*1024))
+        s += 'bitrate          : %.2f [kbit/s]\n' % self.bitrate
         s += 'has comment      : %s\n'          % ('yes' if len(self._comment) != 0 else 'no')
         if self.ch != 0:
             # += '-----------------:---------------------\n'
@@ -147,6 +148,12 @@ class Audio(object):
         assert isinstance(samples, np.ndarray)
         assert len(samples) == self.nofsamples
         self.samples[:, idx] = samples
+
+    @property
+    def bitrate(self):
+        """Calculate the overall bitrate, in kbit/s"""
+        bitrate = (self.fs * self.ch * self.samples.itemsize*8)/1000
+        return bitrate
 
     def copy(self):
         """deep:ish copy"""
