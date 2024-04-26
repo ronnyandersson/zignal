@@ -7,10 +7,8 @@ Created on 21 Jun 2015
 '''
 
 # Standard library
+import logging
 import unittest
-
-# Third party
-import nose
 
 # Internal
 from zignal.filters import linearfilter
@@ -28,7 +26,7 @@ class Test_Filter(unittest.TestCase):
         B = (0.1, 0.2, 0.3)
         A = (0.4, 0.5, 0.6)
         f = linearfilter.Filter(B, A, fs=48000)
-        print(f)
+        #print(f)
 
         self.verify_coefficients(f, B, A)
 
@@ -36,7 +34,7 @@ class Test_Filter(unittest.TestCase):
         B = (0.1, 0.2, 0.3)
         A = (0.4, 0.5, 0.6)
         f = linearfilter.Filter(B, A, fs=48000)
-        print(f)
+        #print(f)
 
         BB = f.get_feed_forward()
 
@@ -46,7 +44,7 @@ class Test_Filter(unittest.TestCase):
         B = (0.1, 0.2, 0.3)
         A = (0.4, 0.5, 0.6)
         f = linearfilter.Filter(B, A, fs=48000)
-        print(f)
+        #print(f)
 
         AA = f.get_feed_back()
 
@@ -56,7 +54,7 @@ class Test_Filter(unittest.TestCase):
         B = (0.1, 0.2, 0.3)
         A = (0.4, 0.5, 0.6)
         f = linearfilter.Filter(B, A, fs=48000)
-        print(f)
+        #print(f)
 
         f.normalise()
         unused_BB, AA = f.get_coefficients()
@@ -67,7 +65,7 @@ class Test_Filter(unittest.TestCase):
         A = (1.1, 1.2, 1.3)
         f = linearfilter.Filter(fs=48000)
         f.set_coefficients(B, A)
-        print(f)
+        #print(f)
 
         self.verify_coefficients(f, B, A)
 
@@ -88,11 +86,14 @@ class Test_normalised_frequency(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    noseargs = [__name__,
-                "--verbosity=2",
-                "--logging-format=%(asctime)s %(levelname)-8s: %(name)-15s " +
-                "%(module)-15s %(funcName)-20s %(message)s",
-                "--logging-level=DEBUG",
-                __file__,
-                ]
-    nose.run(argv=noseargs)
+    logging.basicConfig(
+        format="%(levelname)-8s: %(module)s.%(funcName)-15s %(message)s",
+        level="DEBUG",
+        )
+    # some libraries are noisy in DEBUG
+    logging.getLogger("matplotlib").setLevel(logging.INFO)
+    logging.getLogger("PIL").setLevel(logging.WARNING)
+
+    # from command line:
+    # $ python -m unittest -v zignal/tests/<filename>.py
+    unittest.main(verbosity=2)

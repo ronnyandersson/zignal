@@ -58,7 +58,7 @@ See the examples folder for more examples.
 
 ## Requirements
 
-This library relies on numpy, scipy, matplotlib and optionally pyaudio (and nose for unit testing). It is recommended to create a virtual environment and let pip install the dependencies automatically.
+This library relies on numpy, scipy, matplotlib and optionally pyaudio. It is recommended to create a virtual environment and let pip install the dependencies automatically.
 
     python3 -m venv <name-of-virtualenv>
     . <name-of-virtualenv>/bin/activate

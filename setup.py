@@ -25,7 +25,6 @@ setup(
                            ],
     extras_require      = {
                            'sndcard': ['pyaudio'],
-                           'testing': ['nose'],
                           },
     url                 = 'https://github.com/ronnyandersson/zignal',
     download_url        = 'https://pypi.python.org/pypi/zignal',

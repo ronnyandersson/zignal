@@ -7,10 +7,10 @@ Created on 28 Feb 2014
 '''
 
 # Standard library
+import logging
 import unittest
 
 # Third party
-import nose
 import numpy as np
 
 # Internal
@@ -22,9 +22,9 @@ class Test_ConvertBackToBack(unittest.TestCase):
         self.x = Audio(fs=10, initialdata=np.zeros((10, 1)))
         self.x.samples[0] = -1.0
         self.x.samples[1] =  1.0                                            # noqa: E222
-        print(self.x)
-        print(self.x.samples)
-        print()
+        #print(self.x)
+        #print(self.x.samples)
+        #print()
 
     def quantization_step_size(self, bits):
         return 2**-(bits-1)
@@ -32,8 +32,8 @@ class Test_ConvertBackToBack(unittest.TestCase):
     def test_float_to_int8_to_float64(self):
         self.x.convert_to_integer(targetbits=8)
         self.x.convert_to_float(targetbits=64)
-        print(self.x)
-        print(self.x.samples)
+        #print(self.x)
+        #print(self.x.samples)
 
         q = self.quantization_step_size(8)
         self.assertAlmostEqual(self.x.samples[0], -1.0 + q, places=20)
@@ -42,8 +42,8 @@ class Test_ConvertBackToBack(unittest.TestCase):
     def test_float_to_int16_to_float64(self):
         self.x.convert_to_integer(targetbits=16)
         self.x.convert_to_float(targetbits=64)
-        print(self.x)
-        print(self.x.samples)
+        #print(self.x)
+        #print(self.x.samples)
 
         q = self.quantization_step_size(16)
         self.assertAlmostEqual(self.x.samples[0], -1.0 + q, places=20)
@@ -52,8 +52,8 @@ class Test_ConvertBackToBack(unittest.TestCase):
     def test_float_to_int32_to_float64(self):
         self.x.convert_to_integer(targetbits=32)
         self.x.convert_to_float(targetbits=64)
-        print(self.x)
-        print(self.x.samples)
+        #print(self.x)
+        #print(self.x.samples)
 
         q = self.quantization_step_size(32)
         self.assertAlmostEqual(self.x.samples[0], -1.0 + q, places=20)
@@ -65,14 +65,14 @@ class Test_ConvertFloatToInt(unittest.TestCase):
         self.x = Audio(fs=10, initialdata=np.zeros((10, 1)))
         self.x.samples[0] = -1.0
         self.x.samples[1] =  1.0                                            # noqa: E222
-        print(self.x)
-        print(self.x.samples)
-        print()
+        #print(self.x)
+        #print(self.x.samples)
+        #print()
 
     def convert(self, targetbits=None):
         self.x.convert_to_integer(targetbits=targetbits)
-        print(self.x)
-        print(self.x.samples)
+        #print(self.x)
+        #print(self.x.samples)
 
         self.assertIsInstance(self.x.samples, np.ndarray)
 
@@ -109,14 +109,14 @@ class Test_ConvertFloatToInt(unittest.TestCase):
 
 class Test_ConvertIntToFloat32(unittest.TestCase):
     def convert(self, y, targetbits=None):
-        print(y)
-        print(y.pretty_string_samples())
-        print()
+        #print(y)
+        #print(y.pretty_string_samples())
+        #print()
 
         y.convert_to_float(targetbits=targetbits)
-        print(y)
-        print(y.pretty_string_samples())
-        print()
+        #print(y)
+        #print(y.pretty_string_samples())
+        #print()
 
     def test_int8(self):
         x = Audio(fs=10, initialdata=np.zeros((10, 1), dtype=np.int8))
@@ -151,11 +151,14 @@ class Test_ConvertIntToFloat32(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    noseargs = [__name__,
-                "--verbosity=2",
-                "--logging-format=%(asctime)s %(levelname)-8s: %(name)-15s " +
-                "%(module)-15s %(funcName)-20s %(message)s",
-                "--logging-level=DEBUG",
-                __file__,
-                ]
-    nose.run(argv=noseargs)
+    logging.basicConfig(
+        format="%(levelname)-8s: %(module)s.%(funcName)-15s %(message)s",
+        level="DEBUG",
+        )
+    # some libraries are noisy in DEBUG
+    logging.getLogger("matplotlib").setLevel(logging.INFO)
+    logging.getLogger("PIL").setLevel(logging.WARNING)
+
+    # from command line:
+    # $ python -m unittest -v zignal/tests/<filename>.py
+    unittest.main(verbosity=2)

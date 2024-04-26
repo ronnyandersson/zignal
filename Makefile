@@ -15,5 +15,5 @@ flake8:
 
 .PHONY: test
 test:
-	nosetests
+	python -m unittest -v zignal/tests/test_*.py
 	@echo ""
