@@ -640,7 +640,16 @@ class Audio(object):
         if ch != 'all':
             plt.plot(timerange, self.samples[samplerange[0]:samplerange[1], ch-1], **kwargs)
         else:
-            plt.plot(timerange, self.samples[samplerange[0]:samplerange[1], :], **kwargs)
+            linestyles = ["-", ":", "-.", "--", ]
+            for i in range(self.ch):
+                plt.plot(
+                    timerange, self.samples[samplerange[0]:samplerange[1], i],
+                    label="ch: %02i" % (i+1),
+                    ls=linestyles[0],
+                    **kwargs)
+                linestyles.insert(0, linestyles.pop())  # cycle (rotate)
+            plt.legend(loc='best')
+
         plt.xlabel('Time [s]')
         plt.ylabel('Amplitude [linear]')
         if 'label' in kwargs:
@@ -657,15 +666,18 @@ class Audio(object):
         """Make a plot (in the frequency domain) of all channels"""
 
         ymin = kwargs.get('ymin', -160)     # dB
+        linear = kwargs.get('linear', False)
 
         freq, mag = self.fft(window=window, normalise=normalise)
 
         fig_id = 1
         plt.figure(fig_id)
 
-        #plt.semilogx(freq, mag, **kwargs)   # plots all channel directly
         for ch in range(self.ch):
-            plt.semilogx(freq, mag[:, ch], label='ch%2i' % (ch+1))
+            if linear:
+                plt.plot(freq, mag[:, ch], label='ch%2i' % (ch+1))
+            else:
+                plt.semilogx(freq, mag[:, ch], label='ch%2i' % (ch+1))
 
         plt.xlim(left=1)    # we're not interested in freqs. below 1 Hz
         plt.ylim(bottom=ymin)
