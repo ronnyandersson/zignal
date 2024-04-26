@@ -49,7 +49,7 @@ class Audio(object):
             # if we are not given any initial samples we create an empty array of
             # zeros for the audio samples.
             assert isinstance(channels, int)
-            assert not(nofsamples != 0 and duration is not None), \
+            assert not (nofsamples != 0 and duration is not None), \
                 "choose either samples or duration"
 
             self.ch = channels
