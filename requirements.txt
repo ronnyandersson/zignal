@@ -1,3 +1,0 @@
--e .[sndcard]
-flake8
-isort
