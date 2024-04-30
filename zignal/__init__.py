@@ -6,7 +6,7 @@ This is the zignal library
 @license: MIT
 """
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"
 
 # must be imported first
 from .audio import *    # isort:skip                        # noqa: F403
