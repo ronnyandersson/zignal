@@ -28,19 +28,16 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Topic :: Education",
     "Topic :: Multimedia :: Sound/Audio :: Analysis",
-    "Topic :: Multimedia :: Sound/Audio :: Capture/Recording",
     "Topic :: Multimedia :: Sound/Audio :: Editors",
     "Topic :: Multimedia :: Sound/Audio :: MIDI",
     "Topic :: Multimedia :: Sound/Audio :: Mixers",
-    "Topic :: Multimedia :: Sound/Audio :: Players",
     "Topic :: Multimedia :: Sound/Audio :: Sound Synthesis",
     "Topic :: Scientific/Engineering :: Mathematics",
     "Topic :: Software Development :: Quality Assurance",
     "Topic :: Software Development :: Testing",
 ]
 keywords = [
-    "audio", "sound", "card", "soundcard", "pyaudio", "portaudio", "playback",
-    "recording", "digital", "signal", "processing", "DSP", "signalprocessing",
+    "audio", "sound", "digital", "signal", "processing", "DSP", "signalprocessing",
     "fourier", "FFT", "filter", "filtering", "FIR", "IIR", "CIC", "cascaded",
     "integrator", "comb", "decimation", "decimator", "parametric", "eq",
     "equaliser", "equalizer", "biquad", "cookbook", "sine", "generator", "mls",
@@ -53,9 +50,7 @@ keywords = [
 ]
 
 [project.optional-dependencies]
-sndcard = ["pyaudio",]
 dev = [
-    "zignal[sndcard]",
     "flake8",
     "isort",
 ]
@@ -64,9 +59,6 @@ dev = [
 Homepage = "https://github.com/ronnyandersson/zignal"
 Issues = "https://github.com/ronnyandersson/zignal/issues"
 Download = "https://pypi.python.org/pypi/zignal"
-
-[project.scripts]
-zignal-listsndcards = "zignal.sndcard:list_devices"
 
 [tool.hatch.version]
 path = "zignal/__init__.py"
