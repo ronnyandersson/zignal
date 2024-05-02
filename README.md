@@ -52,34 +52,23 @@ This is a python audio signal processing library.
     >>> f.plot_pole_zero()
     >>>
 
-See the examples folder for more examples.
+See the examples folder for more examples. Also check out the sister project
+[zoundcard](https://github.com/ronnyandersson/zoundcard) which can play audio
+on a soundcard.
 
 ## Requirements
 
-This library relies on numpy, scipy, matplotlib and optionally pyaudio. It is
-recommended to create a virtual environment and let pip install the
-dependencies automatically.
+This library relies on numpy, scipy and matplotlib. It is recommended to create
+a virtual environment and let pip install the dependencies automatically.
 
     python3 -m venv <name-of-virtualenv>
     . <name-of-virtualenv>/bin/activate
     pip install zignal
 
-Optionally, to be able to use a soundcard, first install the python development
-headers and the portaudio development files. On debian/ubuntu,
-
-    sudo apt install python3-dev portaudio19-dev
-
-then run
-
-    pip install zignal[sndcard]
-
-which will automatically build the portaudio library and then pyaudio.
-
 ## Local development
 
 Create a python3 virtualenv and install from the local source code to make the
-zignal library editable. Note that the python development headers (python3-dev)
-and portaudio19-dev must be installed first.
+zignal library editable.
 
     python3 -m venv venv_dev
     . venv_dev/bin/activate
