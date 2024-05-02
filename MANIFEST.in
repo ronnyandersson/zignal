@@ -1,4 +1,0 @@
-include README.*
-include LICENSE.*
-
-global-exclude sandbox*.py

@@ -6,14 +6,13 @@ Created on 21 Feb 2015
 @license: MIT
 '''
 
-# standard library
+# Standard library
+import logging
 import unittest
 
-# external libraries
-import nose
-
-# local libraries
+# Internal
 from zignal.music import spn
+
 
 class Test_key2index(unittest.TestCase):
     def test_increasing(self):
@@ -62,7 +61,7 @@ class Test_key2index(unittest.TestCase):
         self.assertRaises(AssertionError,   spn.key2index, 'H4')
 
     def test_C_flat(self):
-        #C-flat and B-sharp issues
+        # C-flat and B-sharp issues
         self.assertEqual(spn.key2index('Cb4'), spn.key2index('B3'))
         self.assertEqual(spn.key2index('B#4'), spn.key2index('C5'))
 
@@ -86,6 +85,7 @@ class Test_key2index(unittest.TestCase):
         self.assertRaises(ValueError,       spn.key2index, '')
         self.assertRaises(AssertionError,   spn.key2index, ' ')
 
+
 class Test_index2key(unittest.TestCase):
     def test_known_values(self):
         self.assertEqual(spn.index2key(49), 'A4')
@@ -95,22 +95,22 @@ class Test_index2key(unittest.TestCase):
         self.assertEqual(spn.index2key(11), 'G1')
 
     def test_increasing(self):
-        self.assertEqual(spn.index2key(1),  'A0' )
+        self.assertEqual(spn.index2key(1),  'A0')
         self.assertEqual(spn.index2key(2),  'A#0')
-        self.assertEqual(spn.index2key(3),  'B0' )
-        self.assertEqual(spn.index2key(4),  'C1' )
+        self.assertEqual(spn.index2key(3),  'B0')
+        self.assertEqual(spn.index2key(4),  'C1')
         self.assertEqual(spn.index2key(5),  'C#1')
-        self.assertEqual(spn.index2key(6),  'D1' )
+        self.assertEqual(spn.index2key(6),  'D1')
         self.assertEqual(spn.index2key(7),  'D#1')
-        self.assertEqual(spn.index2key(8),  'E1' )
-        self.assertEqual(spn.index2key(9),  'F1' )
+        self.assertEqual(spn.index2key(8),  'E1')
+        self.assertEqual(spn.index2key(9),  'F1')
         self.assertEqual(spn.index2key(10), 'F#1')
-        self.assertEqual(spn.index2key(11), 'G1' )
+        self.assertEqual(spn.index2key(11), 'G1')
         self.assertEqual(spn.index2key(12), 'G#1')
-        self.assertEqual(spn.index2key(13), 'A1' )
+        self.assertEqual(spn.index2key(13), 'A1')
         self.assertEqual(spn.index2key(14), 'A#1')
-        self.assertEqual(spn.index2key(15), 'B1' )
-        self.assertEqual(spn.index2key(16), 'C2' )
+        self.assertEqual(spn.index2key(15), 'B1')
+        self.assertEqual(spn.index2key(16), 'C2')
 
     def test_argument_float(self):
         self.assertRaises(AssertionError,   spn.index2key,   1.0)
@@ -122,12 +122,16 @@ class Test_index2key(unittest.TestCase):
         self.assertRaises(AssertionError,   spn.index2key,  'A4')
         self.assertRaises(AssertionError,   spn.index2key,  '4')
 
+
 if __name__ == "__main__":
-    noseargs = [__name__,
-                "--verbosity=2",
-                "--logging-format=%(asctime)s %(levelname)-8s: %(name)-15s "+
-                                 "%(module)-15s %(funcName)-20s %(message)s",
-                "--logging-level=DEBUG",
-                __file__,
-                ]
-    nose.run(argv=noseargs)
+    logging.basicConfig(
+        format="%(levelname)-8s: %(module)s.%(funcName)-15s %(message)s",
+        level="DEBUG",
+        )
+    # some libraries are noisy in DEBUG
+    logging.getLogger("matplotlib").setLevel(logging.INFO)
+    logging.getLogger("PIL").setLevel(logging.WARNING)
+
+    # from command line:
+    # $ python -m unittest -v zignal/tests/<filename>.py
+    unittest.main(verbosity=2)

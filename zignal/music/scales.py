@@ -6,14 +6,15 @@ Created on 21 Feb 2015
 @license: MIT
 '''
 
-# standard library
+# Standard library
 import logging
 
-# external libraries
+# Third party
 import numpy as np
 
-# local libraries
+# Local folders
 from . import spn
+
 
 def equal_temperament(n):
     """Twelve-tone equal temperament (12TET) divides the octave into 12
@@ -30,6 +31,7 @@ def equal_temperament(n):
     ratio = np.power(2, (np.array(n)/12))
 
     return ratio
+
 
 def piano_key2freq(n, a=49, tuning=440):
     """Twelve-tone equal temperament tuning for a theoretically ideal piano.
@@ -48,6 +50,7 @@ def piano_key2freq(n, a=49, tuning=440):
 
     return frequency
 
+
 def piano_freq2key(f, a=49, tuning=440, quantise=False):
     """Frequency [f] to twelve-tone equal temperament tuning for a theoretically
     ideal piano, where 440Hz-->49
@@ -56,9 +59,10 @@ def piano_freq2key(f, a=49, tuning=440, quantise=False):
     key = 12*np.log2(f/tuning) + a
 
     if quantise:
-        key = np.int(np.round(key))
+        key = int(np.round(key))
 
     return key
+
 
 def piano_note2freq(note, tuning=440):
     """Convert a piano note like 'C4' to 12TET frequency 261.6 Hz"""
@@ -67,12 +71,14 @@ def piano_note2freq(note, tuning=440):
 
     return freq
 
+
 def piano_freq2note(f, tuning=440):
     """Given frequency f, calculate the nearest note in 12TET SPN notation"""
     idx = piano_freq2key(f, tuning=tuning, quantise=True)
     key = spn.index2key(idx)
 
     return key
+
 
 def midi_key2freq(n, tuning=440):
     """MIDI Tuning Standard. Convert midi note n to frequency f [Hz]. MIDI note 69
@@ -84,6 +90,7 @@ def midi_key2freq(n, tuning=440):
     frequency = piano_key2freq(n, a=69, tuning=tuning)
 
     return frequency
+
 
 def midi_freq2key(f, tuning=440, quantise=False):
     """ MIDI Tuning Standard. Convert frequency f [Hz] to a midi note. MIDI note 69
@@ -98,18 +105,24 @@ def midi_freq2key(f, tuning=440, quantise=False):
 
     return midinote
 
+
 __all__ = [
-           'equal_temperament',
-           'piano_key2freq',
-           'piano_freq2key',
-           'piano_note2freq',
-           'piano_freq2note',
-           'midi_key2freq',
-           'midi_freq2key',
-           ]
+    'equal_temperament',
+    'piano_key2freq',
+    'piano_freq2key',
+    'piano_note2freq',
+    'piano_freq2note',
+    'midi_key2freq',
+    'midi_freq2key',
+    ]
 
 if __name__ == '__main__':
-    logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',
-                        level='DEBUG')
+    logging.basicConfig(
+        format="%(levelname)-8s: %(module)s.%(funcName)-15s %(message)s",
+        level="DEBUG",
+        )
+    # some libraries are noisy in DEBUG
+    logging.getLogger("matplotlib").setLevel(logging.INFO)
+    logging.getLogger("PIL").setLevel(logging.WARNING)
 
     print('-- Done --')

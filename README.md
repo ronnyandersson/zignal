@@ -2,8 +2,6 @@
 
 This is a python audio signal processing library.
 
-Python 2 is no longer supported, the last version to support python 2 is 0.2.0
-
 ## Example usage
 
     >>> import zignal
@@ -58,13 +56,16 @@ See the examples folder for more examples.
 
 ## Requirements
 
-This library relies on numpy, scipy, matplotlib and optionally pyaudio (and nose for unit testing). It is recommended to create a virtual environment and let pip install the dependencies automatically.
+This library relies on numpy, scipy, matplotlib and optionally pyaudio. It is
+recommended to create a virtual environment and let pip install the
+dependencies automatically.
 
     python3 -m venv <name-of-virtualenv>
     . <name-of-virtualenv>/bin/activate
     pip install zignal
 
-Optionally, to be able to use a soundcard, first install the python development headers and the portaudio development files. On debian/ubuntu,
+Optionally, to be able to use a soundcard, first install the python development
+headers and the portaudio development files. On debian/ubuntu,
 
     sudo apt install python3-dev portaudio19-dev
 
@@ -76,15 +77,34 @@ which will automatically build the portaudio library and then pyaudio.
 
 ## Local development
 
-Create a python3 virtualenv and install from the requirements.txt file to make the zignal library editable. Note that the python development headers (python3-dev) and portaudio19-dev must be installed first.
+Create a python3 virtualenv and install from the local source code to make the
+zignal library editable. Note that the python development headers (python3-dev)
+and portaudio19-dev must be installed first.
 
-    python3 -m venv zignaldev
-    . zignaldev/bin/activate
-    pip install -r requirements.txt
+    python3 -m venv venv_dev
+    . venv_dev/bin/activate
+    pip install --editable .[dev]
+
+By running `make` it is now possible to run isort, flake8 and also all the unit
+tests. They can also be executed directly from the command line, see the
+Makefile for the full commands to run.
+
+## Build a release
+
+    python3 -m venv venv_build
+    . ./venv_build/bin/activate
+    pip install --upgrade pip build
+    python3 -m build
 
 ## Design goals
 
-1.  Readability over efficiency. This is a python library for development and understanding of audio signal processing.
-2.  The initial goal is to write the functionality in pure python, with the use of numpy, scipy and matplotlib. See rule 1. If efficiency becomes an issue a c/c++ library might be implemented but the pure python code must remain the default choice.
-3.  Design for non real-time processing. Functionality to do real-time processing can be added if it does not break rule 1.
-4.  Self documentation. The code should aim to be well documented, in the source code itself.
+1.  Readability over efficiency. This is a python library for development and
+    understanding of audio signal processing.
+2.  The initial goal is to write the functionality in pure python, with the use
+    of numpy, scipy and matplotlib. See rule 1. If efficiency becomes an issue
+    a c/c++ library might be implemented but the pure python code must remain
+    the default choice.
+3.  Design for non real-time processing. Functionality to do real-time
+    processing can be added if it does not break rule 1.
+4.  Self documentation. The code should aim to be well documented, in the
+    source code itself.

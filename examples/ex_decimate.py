@@ -1,8 +1,8 @@
 '''
-Created on 15 Feb 2015
+Created on 13 Apr 2020
 
 @author: Ronny Andersson (ronny@andersson.tk)
-@copyright: (c) 2015 Ronny Andersson
+@copyright: (c) 2020 Ronny Andersson
 @license: MIT
 '''
 
@@ -10,7 +10,7 @@ Created on 15 Feb 2015
 import logging
 
 # Internal
-from zignal.audio import Sinetone
+import zignal
 
 if __name__ == '__main__':
     logging.basicConfig(
@@ -21,14 +21,16 @@ if __name__ == '__main__':
     logging.getLogger("matplotlib").setLevel(logging.INFO)
     logging.getLogger("PIL").setLevel(logging.WARNING)
 
-    fs  = 1000
-    f0  = 10
-    dur = 0.1
+    fs = 200
+    a = zignal.Audio(fs=fs)
+    a1 = zignal.Sinetone(f0=1, fs=fs, duration=1, gaindb=-6)
+    a2 = zignal.Sinetone(f0=2, fs=fs, duration=1, gaindb=-6)
+    a.append(a1, a2)
+    print(a)
 
-    x = Sinetone(f0=f0, fs=fs, duration=dur, gaindb=0)
-    print(x)
-    x.plot(linestyle='--', marker='x', color='r', label='sine at %i Hz' % f0)
+    a.plot(ch="all", marker="X")
+    a.decimate(10)
+    print(a)
+    a.plot(ch="all", marker="X")
 
-    x.set_sample_rate(500)
-    print(x)
-    x.plot(linestyle='-.', color='k', label='sine at %i Hz' % f0)
+    print('-- Done --')

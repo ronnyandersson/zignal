@@ -1,19 +1,14 @@
-# ignore all IDE and editor generated files
-
-# eclipse
-/.project
-/.pydevproject
+# Any IDE and local editor files are best added locally
+# in your own .git/info/exclude
 
 # auto generated files
-/build/
 /dist/
-/MANIFEST
-/zignal.egg-info/
 *.pyc
 
-# virtualenv
-/venv_zignal/
+# virtual environments
+/venv_*/
 
 # files generated during normal usage
 *.wav
 *.png
+sandbox*

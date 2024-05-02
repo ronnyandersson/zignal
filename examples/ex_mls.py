@@ -6,11 +6,12 @@ Created on 7 Dec 2015
 @license: MIT
 '''
 
-# standard library
+# Standard library
 import logging
 
-# custom libraries
+# Internal
 import zignal
+
 
 def fake_system(x, fs=None):
     f1 = zignal.filters.biquads.RBJ(filtertype="peak", gaindb=-30, f0=10,   Q=0.707*10, fs=fs)
@@ -26,9 +27,15 @@ def fake_system(x, fs=None):
 
     return y
 
+
 if __name__ == '__main__':
-    logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',
-                        level='DEBUG')
+    logging.basicConfig(
+        format="%(levelname)-8s: %(module)s.%(funcName)-15s %(message)s",
+        level="DEBUG",
+        )
+    # some libraries are noisy in DEBUG
+    logging.getLogger("matplotlib").setLevel(logging.INFO)
+    logging.getLogger("PIL").setLevel(logging.WARNING)
 
     # sample rate
     fs = 48000
@@ -52,7 +59,7 @@ if __name__ == '__main__':
     # Create the mls instance and its full sequence.
     mls = zignal.measure.mls.MLS(N=N, taps=taps, fs=fs, repeats=rep, B=B, A=A)
 
-    print (repr(mls))
+    print(repr(mls))
     print(mls)
 
     mls.plot(label="mls signal unfiltered")

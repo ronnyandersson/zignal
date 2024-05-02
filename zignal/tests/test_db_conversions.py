@@ -6,15 +6,16 @@ Created on 23 Oct 2014
 @license: MIT
 '''
 
-# standard library
+# Standard library
+import logging
 import unittest
 
-# external libraries
+# Third party
 import numpy as np
-import nose
 
-# local libraries
-from zignal import lin2db, db2lin, pow2db, db2pow
+# Internal
+from zignal import db2lin, db2pow, lin2db, pow2db
+
 
 class Test_back_to_back(unittest.TestCase):
     def test_nested(self):
@@ -22,26 +23,27 @@ class Test_back_to_back(unittest.TestCase):
         self.assertAlmostEqual(x,       1.234567,  places=6)
 
     def test_lin_to_db_to_lin(self):
-        x = lin2db(db2lin(              1.234567))
+        x = lin2db(db2lin(              1.234567))                              # noqa: E201
         self.assertAlmostEqual(x,       1.234567,  places=6)
 
     def test_pow_to_db_to_pow(self):
-        x = pow2db(db2pow(              1.234567))
+        x = pow2db(db2pow(              1.234567))                              # noqa: E201
         self.assertAlmostEqual(x,       1.234567,  places=6)
 
     def test_lin_to_db_to_lin_arrays(self):
-        x = lin2db(db2lin((             1.234567,   2.345678)))
+        x = lin2db(db2lin((             1.234567,   2.345678)))                 # noqa: E201
         self.assertEqual(x.ndim, 1)
         self.assertEqual(len(x), 2)
         self.assertAlmostEqual(x[0],    1.234567,               places=6)
         self.assertAlmostEqual(x[1],                2.345678,   places=6)
 
     def test_pow_to_db_to_pow_arrays(self):
-        x = pow2db(db2pow((             1.234567,   2.345678)))
+        x = pow2db(db2pow((             1.234567,   2.345678)))                 # noqa: E201
         self.assertEqual(x.ndim, 1)
         self.assertEqual(len(x), 2)
         self.assertAlmostEqual(x[0],    1.234567,               places=6)
         self.assertAlmostEqual(x[1],                2.345678,   places=6)
+
 
 class Test_lin_to_db_known_values(unittest.TestCase):
     def test_known_value_1(self):
@@ -64,6 +66,7 @@ class Test_lin_to_db_known_values(unittest.TestCase):
         x = lin2db(0.0)
         self.assertTrue(np.isneginf(x))
 
+
 class Test_db_to_lin_known_values(unittest.TestCase):
     def test_known_value_0(self):
         x = db2lin(0)
@@ -74,7 +77,7 @@ class Test_db_to_lin_known_values(unittest.TestCase):
         self.assertAlmostEqual(x, 0.1, places=6)
 
     def test_known_value_neg6(self):
-        x = db2lin(-6) # -6.020599913
+        x = db2lin(-6)  # -6.020599913
         self.assertAlmostEqual(x, 0.5, places=2)
 
     def test_known_value_6(self):
@@ -84,6 +87,7 @@ class Test_db_to_lin_known_values(unittest.TestCase):
     def test_known_value_neg_inf(self):
         x = db2lin(float('-inf'))
         self.assertAlmostEqual(x,  0.0, places=6)
+
 
 class Test_pow_to_db_known_values(unittest.TestCase):
     def test_known_value_1(self):
@@ -106,6 +110,7 @@ class Test_pow_to_db_known_values(unittest.TestCase):
         x = pow2db(0.0)
         self.assertTrue(np.isneginf(x))
 
+
 class Test_db_to_pow_known_values(unittest.TestCase):
     def test_known_value_0(self):
         x = db2pow(0)
@@ -126,6 +131,7 @@ class Test_db_to_pow_known_values(unittest.TestCase):
     def test_known_value_neg_10(self):
         x = db2pow(-10)
         self.assertAlmostEqual(x, 0.1, places=2)
+
 
 class Test_lin_to_db_input_datatypes(unittest.TestCase):
     def test_single(self):
@@ -148,20 +154,21 @@ class Test_lin_to_db_input_datatypes(unittest.TestCase):
     def test_np_ndim_1(self):
         x = lin2db(np.ones(10))
         self.assertEqual(x.ndim, 1)
-        self.assertTrue((x <  0.0001).all())
+        self.assertTrue((x <  0.0001).all())                    # noqa: E222
         self.assertTrue((x > -0.0001).all())
 
     def test_np_ndim_2_10x4(self):
         x = lin2db(np.ones((10, 4)))
         self.assertEqual(x.ndim, 2)
-        self.assertTrue((x <  0.0001).all())
+        self.assertTrue((x <  0.0001).all())                    # noqa: E222
         self.assertTrue((x > -0.0001).all())
 
     def test_np_ndim_2_4x10(self):
         x = lin2db(np.ones((4, 10)))
         self.assertEqual(x.ndim, 2)
-        self.assertTrue((x <  0.0001).all())
+        self.assertTrue((x <  0.0001).all())                    # noqa: E222
         self.assertTrue((x > -0.0001).all())
+
 
 class Test_db_to_lin_input_datatypes(unittest.TestCase):
     def test_single(self):
@@ -199,12 +206,16 @@ class Test_db_to_lin_input_datatypes(unittest.TestCase):
         self.assertTrue((x < 1.0001).all())
         self.assertTrue((x > 0.9999).all())
 
+
 if __name__ == "__main__":
-    noseargs = [__name__,
-                "--verbosity=2",
-                "--logging-format=%(asctime)s %(levelname)-8s: %(name)-15s "+
-                                 "%(module)-15s %(funcName)-20s %(message)s",
-                "--logging-level=DEBUG",
-                __file__,
-                ]
-    nose.run(argv=noseargs)
+    logging.basicConfig(
+        format="%(levelname)-8s: %(module)s.%(funcName)-15s %(message)s",
+        level="DEBUG",
+        )
+    # some libraries are noisy in DEBUG
+    logging.getLogger("matplotlib").setLevel(logging.INFO)
+    logging.getLogger("PIL").setLevel(logging.WARNING)
+
+    # from command line:
+    # $ python -m unittest -v zignal/tests/<filename>.py
+    unittest.main(verbosity=2)

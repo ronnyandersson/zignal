@@ -6,21 +6,20 @@ Created on Dec 31, 2013
 @license: MIT
 '''
 
-# standard library
+# Standard library
 import logging
 import os
 
-# external libraries
+# Third party
 import matplotlib.pyplot as plt
 import numpy as np
-import samplerate
-import scipy.signal
 import scipy.io.wavfile
+import scipy.signal
 
-#===================================================================================================
+
+# ==================================================================================================
 # Classes
-#===================================================================================================
-
+# ==================================================================================================
 class Audio(object):
     def __init__(self, channels=0, fs=96000, nofsamples=0, duration=None,
                  initialdata=None, dtype=np.float64):
@@ -49,7 +48,8 @@ class Audio(object):
             # if we are not given any initial samples we create an empty array of
             # zeros for the audio samples.
             assert isinstance(channels, int)
-            assert not(nofsamples!=0 and duration is not None), "choose either samples or duration"
+            assert not (nofsamples != 0 and duration is not None), \
+                "choose either samples or duration"
 
             self.ch = channels
 
@@ -69,9 +69,12 @@ class Audio(object):
             assert isinstance(initialdata, np.ndarray), \
                 'Only numpy arrays are allowed as initial data'
 
-            assert channels == 0, "parameter 'channels' is redundant if initial data is specified"
-            assert nofsamples == 0, "parameter 'nofsamples' is redundant if initial data is specified"
-            assert duration is None, "parameter 'duration' is redundant if initial data is specified"
+            assert channels == 0, \
+                "parameter 'channels' is redundant if initial data is specified"
+            assert nofsamples == 0, \
+                "parameter 'nofsamples' is redundant if initial data is specified"
+            assert duration is None, \
+                "parameter 'duration' is redundant if initial data is specified"
 
             # copy the data to avoid unexpected data corruption
             self.samples = initialdata.copy()
@@ -96,27 +99,28 @@ class Audio(object):
             self._set_duration()
 
         assert self.nofsamples is not None
-        assert self.duration   is not None
-        assert self.ch         is not None
+        assert self.duration is not None
+        assert self.ch is not None
 
     def __str__(self):
         s  = '=======================================\n'
-        s += 'classname        : %s\n'          %self.__class__.__name__
-        s += 'sample rate      : %.1f [Hz]\n'   %self.fs
-        s += 'channels         : %i\n'          %self.ch
-        s += 'duration         : %.3f [s]\n'    %self.duration
-        s += 'datatype         : %s\n'          %self.samples.dtype
-        s += 'samples per ch   : %i\n'          %self.nofsamples
-        s += 'data size        : %.3f [Mb]\n'   %(self.samples.nbytes/(1024*1024))
-        s += 'has comment      : %s\n'          %('yes' if len(self._comment)!=0 else 'no')
+        s += 'classname        : %s\n'          % self.__class__.__name__
+        s += 'sample rate      : %.1f [Hz]\n'   % self.fs
+        s += 'channels         : %i\n'          % self.ch
+        s += 'duration         : %.3f [s]\n'    % self.duration
+        s += 'datatype         : %s\n'          % self.samples.dtype
+        s += 'samples per ch   : %i\n'          % self.nofsamples
+        s += 'data size        : %.3f [Mb]\n'   % (self.samples.nbytes/(1024*1024))
+        s += 'bitrate          : %.2f [kbit/s]\n' % self.bitrate
+        s += 'has comment      : %s\n'          % ('yes' if len(self._comment) != 0 else 'no')
         if self.ch != 0:
             # += '-----------------:---------------------\n'
-            s += 'peak             : %s\n'  %np.array_str(self.peak()[0],
-                                                          precision=4, suppress_small=True)
-            s += 'RMS              : %s\n'  %np.array_str(self.rms(),
-                                                          precision=4, suppress_small=True)
-            s += 'crestfactor      : %s\n'  %np.array_str(self.crest_factor(),
-                                                          precision=4, suppress_small=True)
+            s += 'peak             : %s\n'  % np.array_str(self.peak()[0],
+                                                           precision=4, suppress_small=True)
+            s += 'RMS              : %s\n'  % np.array_str(self.rms(),
+                                                           precision=4, suppress_small=True)
+            s += 'crestfactor      : %s\n'  % np.array_str(self.crest_factor(),
+                                                           precision=4, suppress_small=True)
         s += '-----------------:---------------------\n'
         return s
 
@@ -142,7 +146,13 @@ class Audio(object):
         """
         assert isinstance(samples, np.ndarray)
         assert len(samples) == self.nofsamples
-        self.samples[:,idx] = samples
+        self.samples[:, idx] = samples
+
+    @property
+    def bitrate(self):
+        """Calculate the overall bitrate, in kbit/s"""
+        bitrate = (self.fs * self.ch * self.samples.itemsize*8)/1000
+        return bitrate
 
     def copy(self):
         """deep:ish copy"""
@@ -155,26 +165,26 @@ class Audio(object):
             u = 'ch'
             for i in range(self.ch):
                 t += '-------:'
-                u += '  %2i   :' %(i+1)
+                u += '  %2i   :' % (i+1)
             t += '\n'
             u += '\n'
 
-            s += t  #   -------:-------:-------:
-            s += u  # ch   1   :   2   :   3   :
-            s += t  #   -------:-------:-------:
+            s += t  # -->   -------:-------:-------:
+            s += u  # --> ch   1   :   2   :   3   :
+            s += t  # -->   -------:-------:-------:
 
-        s += np.array_str(self.samples[idx_start:idx_end,:],
+        s += np.array_str(self.samples[idx_start:idx_end, :],
                           max_line_width=260,   # we can print 32 channels before linewrap
                           precision=precision,
                           suppress_small=True)
         if (idx_end-idx_start) < self.nofsamples:
-            s  = s[:-1] # strip the right ']' character
+            s  = s[:-1]     # strip the right ']' character
             s += '\n ...,\n'
-            lastlines = np.array_str(self.samples[-3:,:],
+            lastlines = np.array_str(self.samples[-3:, :],
                                      max_line_width=260,
                                      precision=precision,
                                      suppress_small=True)
-            s += ' %s\n' %lastlines[1:] # strip first '['
+            s += ' %s\n' % lastlines[1:]    # strip first '['
         return s
 
     def pad(self, nofsamples=0):
@@ -186,8 +196,61 @@ class Audio(object):
         zeros = np.zeros((nofsamples, self.ch), dtype=self.samples.dtype)
         self.samples = np.append(self.samples, zeros, axis=0)
 
-        self.nofsamples=len(self.samples)
+        self.nofsamples = len(self.samples)
         self._set_duration()
+
+    def iter_chunks(self, chunksize=1024):
+        """
+        Splits the audio samples into chunks, to iterate over in block-based
+        processing. There are no restrictions on the chunk size, but in
+        practical implementations it is usually a power of two. This is not
+        a requirement here.
+
+        Chunks are sometimes called blocks, this is the same. So chunksize is
+        the same as blocksize.
+        """
+
+        chunks  = len(self.samples) // chunksize
+        missing = len(self.samples) % chunksize
+        self._logger.debug("chunksize        : %i", chunksize)
+        self._logger.debug("data shape       : %s", self.samples.shape)
+        self._logger.debug("chunks pre pad   : %i", chunks)
+        self._logger.debug("missing (modulo) : %i", missing)
+
+        # If the data doesn't add up to a full chunk we need to pad with zeros but
+        # first we need to calculate how many samples are missing for a full chunk.
+        if missing:
+            missing_samples = chunksize - missing
+            self._logger.debug("missing (samples): %s", missing_samples)
+
+            # Pad with zeros, assuming that all channels are equally long in the
+            # first place. A new array is created since the original data should
+            # be kept unchanged. This means that this iterator is not very memory
+            # efficient. This can be avoided if the data is padded to add up to
+            # a multiple of the chunksize before this method is called. If this is
+            # acceptable (changing the original data) then this iterator is very
+            # memory efficient since only a new view of the original data is
+            # created (if possible, not guaranteed)
+            padded = np.concatenate([self.samples, np.zeros((missing_samples, self.ch))])
+            self._logger.debug("padded shape     : %s", padded.shape)
+
+        else:
+            # Here the audio samples adds up to a multiple of the chunksize
+            self._logger.debug("*** No padding is needed")
+            padded = self.samples
+
+        padded_chunks = len(padded) // chunksize
+
+        self._logger.info("chunks (total)   : %i", padded_chunks)
+
+        reshape = padded.reshape((padded_chunks, chunksize, self.ch))
+
+        # Now finally iterate over all the chunks
+        for i in range(padded_chunks):
+            curr_start  = chunksize*i
+            curr_stop   = curr_start + chunksize - 1
+            self._logger.debug("current slice    : %10i %10i", curr_start, curr_stop)
+            yield reshape[i]
 
     def is_empty(self):
         """Check if all samples in all channels are zero, then file is empty."""
@@ -198,17 +261,15 @@ class Audio(object):
         peak, idx = self.peak()
         peak = np.abs(peak)
         self._logger.debug("abs(peak) is %s dB at %s sec",
-                          np.array_str(lin2db(peak),
-                                       precision=4, suppress_small=True),
-                          np.array_str(idx/self.fs,
-                                       precision=3, suppress_small=True),
-                          )
+                           np.array_str(lin2db(peak), precision=4, suppress_small=True),
+                           np.array_str(idx/self.fs, precision=3, suppress_small=True),
+                           )
         return np.all(peak <= db2lin(limit))
 
     def trim(self, start=None, end=None):
         """Trim samples **IN PLACE** """
         self.samples = self.samples[start:end]
-        self.nofsamples=len(self.samples)
+        self.nofsamples = len(self.samples)
         self._set_duration()
 
     def trim_sec(self, start=None, end=None):
@@ -230,7 +291,7 @@ class Audio(object):
         assert self.duration > fade_seconds, "fade cannot be longer than the length of the audio"
 
         sample_count = int(np.ceil(fade_seconds*self.fs))
-        self._logger.debug("fade %s sample count: %i" %(direction, sample_count))
+        self._logger.debug("fade %s sample count: %i" % (direction, sample_count))
 
         # generate the ramp
         if direction == "out":
@@ -252,7 +313,7 @@ class Audio(object):
         # as in (samples, channels)
         gains = np.expand_dims(gains, axis=1)
 
-        assert len(gains) ==  len(self)
+        assert len(gains) == len(self)
 
         # repeat the gain vector so we get as many gain channels as all the channels
         gains = np.repeat(gains, self.ch, axis=1)
@@ -272,8 +333,8 @@ class Audio(object):
 
     def delay(self, n, channel=1):
         """Delay channel x by n samples"""
-        self.samples[:,channel-1] = np.pad(self.samples[:,channel-1], (n, 0),
-                                           mode="constant")[:-n]
+        self.samples[:, channel-1] = \
+            np.pad(self.samples[:, channel-1], (n, 0), mode="constant")[:-n]
 
     def get_time(self):
         """Return a vector of time values, starting with t0=0. Useful when plotting."""
@@ -283,7 +344,7 @@ class Audio(object):
         assert channel != 0, "channel count starts at 1"
         assert channel <= self.ch, \
             "channel %i does not exist, %i channels available" % (channel, self.ch)
-        return Audio(fs=self.fs, initialdata=self.samples[:,channel-1])
+        return Audio(fs=self.fs, initialdata=self.samples[:, channel-1])
 
     def comment(self, comment=None):
         """Modify or return a string comment."""
@@ -327,16 +388,19 @@ class Audio(object):
         for i, other in enumerate(args):
             assert isinstance(other, Audio), "only Audio() instances can be used"
 
-            self._logger.debug("** iteration %02i --> appending %s" %((i+1), other.__class__.__name__))
-            assert self.fs == other.fs, "Sample rates must match (%s != %s)" %(self.fs, other.fs)
+            self._logger.debug(
+                "** iteration %02i --> appending %s" % ((i+1), other.__class__.__name__))
+
+            assert self.fs == other.fs, "Sample rates must match (%s != %s)" % (self.fs, other.fs)
             assert self.samples.dtype == other.samples.dtype, \
-                "Data types must match (%s != %s)"%(self.samples.dtype, other.samples.dtype)
+                "Data types must match (%s != %s)" % (self.samples.dtype, other.samples.dtype)
 
             max_nofsamples = max(self.nofsamples,  other.nofsamples)
             missingsamples = abs(self.nofsamples - other.nofsamples)
 
-            self._logger.debug("max nof samples: %i" %max_nofsamples)
-            self._logger.debug("appending %i new channel(s) and %i samples" %(other.ch, missingsamples))
+            self._logger.debug("max nof samples: %i" % max_nofsamples)
+            self._logger.debug(
+                "appending %i new channel(s) and %i samples" % (other.ch, missingsamples))
 
             if self.nofsamples > other.nofsamples:
                 self._logger.debug("self.nofsamples > other.nofsamples")
@@ -359,7 +423,7 @@ class Audio(object):
                 self.samples = np.append(self.samples, other.samples, axis=1)
 
             self.ch = self.ch+other.ch
-            self.nofsamples=max_nofsamples
+            self.nofsamples = max_nofsamples
             self._set_duration()
 
     def concat(self, *args):
@@ -374,15 +438,16 @@ class Audio(object):
         for i, other in enumerate(args):
             assert isinstance(other, Audio), "only Audio() instances can be used"
 
-            self._logger.debug("** iteration %02i --> appending %s" %((i+1), other.__class__.__name__))
-            assert self.fs == other.fs, "Sample rates must match (%s != %s)" %(self.fs, other.fs)
+            self._logger.debug(
+                "** iteration %02i --> appending %s" % ((i+1), other.__class__.__name__))
+            assert self.fs == other.fs, "Sample rates must match (%s != %s)" % (self.fs, other.fs)
             assert self.samples.dtype == other.samples.dtype, \
-                "Data types must match (%s != %s)"%(self.samples.dtype, other.samples.dtype)
+                "Data types must match (%s != %s)" % (self.samples.dtype, other.samples.dtype)
             assert self.ch == other.ch, "channel count must match"
 
             self.samples = np.append(self.samples, other.samples, axis=0)
 
-            self.nofsamples=len(self.samples)
+            self.nofsamples = len(self.samples)
             self._set_duration()
 
     def gain(self, *args):
@@ -390,7 +455,7 @@ class Audio(object):
 
         Converts **IN PLACE**
         """
-        self._logger.debug('gains: %s' %str(args))
+        self._logger.debug('gains: %s' % str(args))
 
         dt  = self.samples.dtype
         lin = db2lin(args)
@@ -436,7 +501,7 @@ class Audio(object):
                 bigger  = np.asarray(self.samples, dtype=np.int64)
                 idx     = np.absolute(bigger).argmax(axis=0)
 
-            peak = np.array([self.samples[row,col] for col, row in enumerate(idx)])
+            peak = np.array([self.samples[row, col] for col, row in enumerate(idx)])
         else:
             # no samples are set but channels are configured
             idx  = np.zeros(self.ch, dtype=np.int64)
@@ -481,22 +546,26 @@ class Audio(object):
         assert targetbits in (8, 16, 32, 64)
         assert self.samples.dtype in (np.int8, np.int16, np.int32, np.int64,
                                       np.float32, np.float64)
-        dt = { 8 : 'int8',
-              16 : 'int16',
-              32 : 'int32',
-              64 : 'int64'}
+        dt = {
+            8  : 'int8',
+            16 : 'int16',
+            32 : 'int32',
+            64 : 'int64',
+            }
 
         sourcebits = self.samples.itemsize * 8
 
         if self.samples.dtype in (np.float32, np.float64):
-            self._logger.debug("source is %02i bits (float),   target is %2i bits (integer)"
-                              %(sourcebits, targetbits))
+            self._logger.debug(
+                "source is %02i bits (float),   target is %2i bits (integer)"
+                % (sourcebits, targetbits))
 
             self.samples = np.array(self.samples*(2**(targetbits-1)-1),
                                     dtype=dt.get(targetbits))
         else:
-            self._logger.debug("source is %02i bits (integer), target is %2i bits (integer)"
-                              %(sourcebits, targetbits))
+            self._logger.debug(
+                "source is %02i bits (integer), target is %2i bits (integer)"
+                % (sourcebits, targetbits))
             raise NotImplementedError("TODO: implement scale int->int")
 
     def convert_to_float(self, targetbits=64):
@@ -512,14 +581,16 @@ class Audio(object):
         sourcebits = self.samples.itemsize * 8
 
         if self.samples.dtype in (np.int8, np.int16, np.int32, np.int64):
-            self._logger.debug("source is %02i bits (integer), target is %2i bits (float)"
-                              %(sourcebits, targetbits))
+            self._logger.debug(
+                "source is %02i bits (integer), target is %2i bits (float)"
+                % (sourcebits, targetbits))
 
             self.samples = np.array(self.samples/(2**(sourcebits-1)), dtype=dt.get(targetbits))
 
         else:
-            self._logger.debug("source is %02i bits (float),   target is %2i bits (float)"
-                              %(sourcebits, targetbits))
+            self._logger.debug(
+                "source is %02i bits (float),   target is %2i bits (float)"
+                % (sourcebits, targetbits))
 
             self.samples = np.array(self.samples, dtype=dt.get(targetbits))
 
@@ -528,14 +599,14 @@ class Audio(object):
 
         assert filename is not None, "Specify a filename, for example 'filename=audio.wav'"
 
-        self._logger.debug("writing file %s" %filename)
+        self._logger.debug("writing file %s" % filename)
         if self.samples.dtype == np.float64:
-            self._logger.warn("datatype is %s" %self.samples.dtype)
+            self._logger.warn("datatype is %s" % self.samples.dtype)
 
         try:
             scipy.io.wavfile.write(filename, int(self.fs), self.samples)
-        except:
-            self._logger.exception("Could not write file: '%s'" %filename)
+        except:     # noqa: E722
+            self._logger.exception("Could not write file: '%s'" % filename)
 
     def plot(self, ch=1, plotname=None, plotrange=(None, None), **kwargs):
         """Plot the audio data on a time domain plot.
@@ -550,9 +621,9 @@ class Audio(object):
         if ch != 'all':
             assert ch-1 < self.ch, "channel does not exist"
 
-        if plotrange[0] == None:
+        if plotrange[0] is None:
             plotrange = (0, plotrange[1])
-        if plotrange[1] == None:
+        if plotrange[1] is None:
             plotrange = (plotrange[0], self.duration)
 
         assert plotrange[0] >= 0 and plotrange[1] <= self.duration, "plotrange is out of bounds"
@@ -560,14 +631,24 @@ class Audio(object):
 
         # Any fractional samples are truncated here
         samplerange = (int(plotrange[0]*self.fs), int(plotrange[1]*self.fs))
-        timerange = np.linspace(plotrange[0], plotrange[1], num=samplerange[1]-samplerange[0], endpoint=False)
+        timerange = np.linspace(
+            plotrange[0], plotrange[1], num=samplerange[1]-samplerange[0], endpoint=False)
 
         plt.figure(1)
-        plt.title("%s" %self.__class__.__name__)
+        plt.title("%s" % self.__class__.__name__)
         if ch != 'all':
-            plt.plot(timerange, self.samples[samplerange[0]:samplerange[1],ch-1], **kwargs)
+            plt.plot(timerange, self.samples[samplerange[0]:samplerange[1], ch-1], **kwargs)
         else:
-            plt.plot(timerange, self.samples[samplerange[0]:samplerange[1],:], **kwargs)
+            linestyles = ["-", ":", "-.", "--", ]
+            for i in range(self.ch):
+                plt.plot(
+                    timerange, self.samples[samplerange[0]:samplerange[1], i],
+                    label="ch: %02i" % (i+1),
+                    ls=linestyles[0],
+                    **kwargs)
+                linestyles.insert(0, linestyles.pop())  # cycle (rotate)
+            plt.legend(loc='best')
+
         plt.xlabel('Time [s]')
         plt.ylabel('Amplitude [linear]')
         if 'label' in kwargs:
@@ -583,16 +664,19 @@ class Audio(object):
     def plot_fft(self, plotname=None, window='hann', normalise=True, **kwargs):
         """Make a plot (in the frequency domain) of all channels"""
 
-        ymin = kwargs.get('ymin', -160) #dB
+        ymin = kwargs.get('ymin', -160)     # dB
+        linear = kwargs.get('linear', False)
 
         freq, mag = self.fft(window=window, normalise=normalise)
 
         fig_id = 1
         plt.figure(fig_id)
 
-        #plt.semilogx(freq, mag, **kwargs)   # plots all channel directly
         for ch in range(self.ch):
-            plt.semilogx(freq, mag[:,ch], label='ch%2i' %(ch+1))
+            if linear:
+                plt.plot(freq, mag[:, ch], label='ch%2i' % (ch+1))
+            else:
+                plt.semilogx(freq, mag[:, ch], label='ch%2i' % (ch+1))
 
         plt.xlim(left=1)    # we're not interested in freqs. below 1 Hz
         plt.ylim(bottom=ymin)
@@ -618,10 +702,10 @@ class Audio(object):
             self._logger.warn("FFT size is a Mersenne Prime, increasing size by 1")
             fftsize = fftsize+1
 
-        self._logger.debug("fftsize: %i" %fftsize)
-        self._logger.debug("window : %s" %str(window))
+        self._logger.debug("fftsize: %i" % fftsize)
+        self._logger.debug("window : %s" % str(window))
 
-        win = scipy.signal.windows.get_window(window, Nx=self.nofsamples) # not fftsize!
+        win = scipy.signal.windows.get_window(window, Nx=self.nofsamples)   # not fftsize!
         win = np.expand_dims(win, axis=1)
         y   = self.samples*win
 
@@ -644,37 +728,35 @@ class Audio(object):
             "Only the Triangular Probability Density Function is implemented"
 
         # Triangular Probability Density Function
-        noise = np.random.triangular(-1, 0, 1, self.samples.shape)
+        #noise = np.random.triangular(-1, 0, 1, self.samples.shape)
 
-    def resample(self, targetrate=8000, converter_type="sinc_best"):
-        """Use the python bindings for the Secret Rabbit Code library
-        (aka libsamplerate) to perform sample rate conversion.
+    def decimate(self, N):
+        """
+        Throw away samples. Keep every Nth sample.
 
         Converts **IN PLACE**
 
-        https://pypi.org/project/samplerate/
-        http://www.mega-nerd.com/SRC/index.html
+        This is half of a downsampler. The other half would be to make sure
+        that the sampling theorem isn't violated for the new sample rate. So
+        the appropriate low pass filtering has to be done on the audio before
+        this metod is called, otherwise aliasing might occur.
         """
 
-        # From API docs:
-        # src_ratio : Equal to output_sample_rate / input_sample_rate.
-        ratio = targetrate / self.fs
+        self._logger.debug("decimate by factor N: %i", N)
 
-        self._logger.debug(
-            "source: %.2f destination: %.2f ratio %f",
-            self.fs, targetrate, ratio)
+        # Use the slice operator. Efficient and fast. Will silently ignore the
+        # last incomplete chunk; for example 100 decimated by 3 leaves 1
+        # sample at the end that cannot be used.
+        self.samples = self.samples[::N]
+        self._logger.debug("decimated: %s", self.samples.shape)
 
-        # We can use the simple API here since we always operate on the whole
-        # audio clip. See http://www.mega-nerd.com/SRC/api_simple.html
-        self.samples = samplerate.resample(
-            self.samples, ratio, converter_type=converter_type)
+        self.nofsamples = len(self.samples)
+        self.set_sample_rate(self.fs/N)
 
-        # The number of samples have changed, that is the whole point of
-        # this operation. Get the new values and calculate the new duration,
-        # hopefully that shouldn't change too much.
-        self.nofsamples, self.ch = self.samples.shape
-        self.fs = targetrate
-        self._set_duration()
+    def resample(self, *args, **kwargs):
+        # Previously used third party libsamplerate here. Does not install
+        # cleanly with pip (needs to compile from src, using cmake)
+        raise NotImplementedError("TODO")
 
     def set_sample_rate(self, new_fs):
         """Change the sample rate fs *without* up/down sample conversion.
@@ -685,7 +767,7 @@ class Audio(object):
         ratio   = new_fs/self.fs
         self.fs = new_fs
 
-        self._logger.debug('ratio: %.3f' %ratio)
+        self._logger.debug('ratio: %.3f' % ratio)
         self._set_duration()
         return ratio
 
@@ -699,20 +781,20 @@ class Audio(object):
         [-2^n, 2^n-1] for ints
         """
         peaks, unused_idx = self.peak()
-        self._logger.debug("raw peaks: %s" %peaks)
+        self._logger.debug("raw peaks: %s" % peaks)
 
         max_abs = np.max(np.absolute(peaks))
-        self._logger.debug("max_abs: %s" %max_abs)
+        self._logger.debug("max_abs: %s" % max_abs)
 
         self.samples = self.samples/max_abs
 
         peaks, unused_idx = self.peak()
-        self._logger.debug("new peaks: %s" %peaks)
+        self._logger.debug("new peaks: %s" % peaks)
 
-#===================================================================================================
+
+# ==================================================================================================
 # Audio sub-classes
-#===================================================================================================
-
+# ==================================================================================================
 class Sinetone(Audio):
     def __init__(self, f0=997, fs=96000, duration=None, gaindb=0, nofsamples=0, phasedeg=0):
         """Generate a sine tone"""
@@ -732,21 +814,22 @@ class Sinetone(Audio):
         assert self.ch == 1, "If a channel has been appended we don't know anything about its data"
 
         s = 'Sinetone(f0=%r, fs=%r, nofsamples=%r, gaindb=%r, phasedeg=%r)' \
-            %(self.f0, self.fs, self.nofsamples,
-              lin2db(abs(float(self.peak()[0]))),  # only one channel here.
-              self.phasedeg)
+            % (self.f0, self.fs, self.nofsamples,
+               lin2db(abs(float(self.peak()[0]))),  # only one channel here.
+               self.phasedeg)
         return s
 
     def __str__(self):
         s  = Audio.__str__(self)
-        s += 'frequency        : %.1f [Hz]\n'   %self.f0
-        s += 'phase            : %.1f [deg]\n'  %self.phasedeg
+        s += 'frequency        : %.1f [Hz]\n'   % self.f0
+        s += 'phase            : %.1f [deg]\n'  % self.phasedeg
         s += '-----------------:---------------------\n'
         return s
 
     def set_sample_rate(self, new_fs):
         ratio = Audio.set_sample_rate(self, new_fs)
         self.f0 = ratio * self.f0
+
 
 class Sinetones(Sinetone):
     def __init__(self, *args, **kwargs):
@@ -831,12 +914,12 @@ class Sinetones(Sinetone):
         self.frequencies    = args
 
         for frequency in self.frequencies:
-            assert frequency < fs/2, "Sampling theorem is violated for frequency %.1f" %frequency
+            assert frequency < fs/2, "Sampling theorem is violated for frequency %.1f" % frequency
 
         if not isinstance(self._gaindb, int):
             assert len(self._gaindb) == len(self.frequencies), \
-                "set as many gains as channels used: %i != %i" %(len(self._gaindb),
-                                                                 len(self.frequencies))
+                "set as many gains as channels used: %i != %i" % (len(self._gaindb),
+                                                                  len(self.frequencies))
 
         Audio.__init__(self, channels=len(self.frequencies), fs=fs, nofsamples=nofsamples,
                        duration=duration)
@@ -845,30 +928,31 @@ class Sinetones(Sinetone):
             if frequency != 0:
                 self._set_samples(idx=i, samples=self._sine_gen(frequency, self.phasedeg))
             else:
-                pass # channel is silence
+                pass    # channel is silence
 
         self.gain(self._gaindb)
 
     def __repr__(self):
         s = 'Sinetones(*%r, fs=%r, nofsamples=%r, gaindb=%r, phasedeg=%r)' \
-            %(list(self.frequencies), self.fs, self.nofsamples,self._gaindb,self.phasedeg)
+            % (list(self.frequencies), self.fs, self.nofsamples, self._gaindb, self.phasedeg)
         return s
 
     def __str__(self):
         s  = Audio.__str__(self)
-        s += 'phase (all ch)   : %.1f [deg]\n'  %self.phasedeg
+        s += 'phase (all ch)   : %.1f [deg]\n'  % self.phasedeg
         s += '                 :\n'
         for i, frequency in enumerate(self.frequencies):
             if frequency != 0:
-                s += 'channel %2i       : %.1f [Hz]\n'   %(i+1, frequency)
+                s += 'channel %2i       : %.1f [Hz]\n'   % (i+1, frequency)
             else:
-                s += 'channel %2i       :\n'   %(i+1)
+                s += 'channel %2i       :\n'   % (i+1)
         s += '-----------------:---------------------\n'
         return s
 
     def set_sample_rate(self, new_fs):
         ratio = Audio.set_sample_rate(self, new_fs)
         self.frequencies = [ratio*f for f in self.frequencies]
+
 
 class SquareWave(Audio):
     def __init__(self, f0=997, fs=96000, duration=None, gaindb=0, nofsamples=0,
@@ -891,22 +975,23 @@ class SquareWave(Audio):
         assert self.ch == 1, "If a channel has been appended we don't know anything about its data"
 
         s = 'SquareWave(f0=%r, fs=%r, gaindb=%r, nofsamples=%r, phasedeg=%r, dutycycle=%r)' \
-            %(self.f0, self.fs,
-              lin2db(abs(float(self.peak()[0]))), # only one channel here.
-              self.nofsamples, self.phasedeg, self.dutycycle)
+            % (self.f0, self.fs,
+               lin2db(abs(float(self.peak()[0]))),   # only one channel here.
+               self.nofsamples, self.phasedeg, self.dutycycle)
         return s
 
     def __str__(self):
         s  = Audio.__str__(self)
-        s += 'frequency        : %.1f [Hz]\n'       %self.f0
-        s += 'phase            : %.1f [deg]\n'      %self.phasedeg
-        s += 'duty cycle       : %.3f (%4.1f%%)\n'  %(self.dutycycle, self.dutycycle*100)
+        s += 'frequency        : %.1f [Hz]\n'       % self.f0
+        s += 'phase            : %.1f [deg]\n'      % self.phasedeg
+        s += 'duty cycle       : %.3f (%4.1f%%)\n'  % (self.dutycycle, self.dutycycle*100)
         s += '-----------------:---------------------\n'
         return s
 
     def set_sample_rate(self, new_fs):
         ratio = Audio.set_sample_rate(self, new_fs)
         self.f0 = ratio * self.f0
+
 
 class FourierSeries(Sinetone):
     def __init__(self, f0=997, fs=96000, duration=None, gaindb=0, nofsamples=0,
@@ -920,34 +1005,35 @@ class FourierSeries(Sinetone):
         assert harmonics >= 0
 
         self.harmonics = harmonics
-        self._logger.debug("fundamental f0: %.1f" %f0)
+        self._logger.debug("fundamental f0: %.1f" % f0)
 
         for n in range(3, 2*(self.harmonics+1), 2):
             if n <= 15:
-                self._logger.debug("adding harmonic n: %2i with amplitude 1/%i" %(n, n))
+                self._logger.debug("adding harmonic n: %2i with amplitude 1/%i" % (n, n))
             if n == 17:
-                self._logger.debug("adding %i more harmonics..." %(self.harmonics-(n-3)//2))
+                self._logger.debug("adding %i more harmonics..." % (self.harmonics-(n-3)//2))
 
             #self.samples[:,0] += np.sin(2*np.pi*(n*f0)*self.get_time()+np.deg2rad(phasedeg*n))/n
-            self.samples[:,0] += (1/n)*self._sine_gen(n*f0, n*phasedeg)
+            self.samples[:, 0] += (1/n)*self._sine_gen(n*f0, n*phasedeg)
         self.gain(gaindb)
 
     def __repr__(self):
         assert self.ch == 1, "If a channel has been appended we don't know anything about its data"
 
         s = 'FourierSeries(f0=%r, fs=%r, gaindb=%r, nofsamples=%r, phasedeg=%r, harmonics=%r)' \
-            %(self.f0, self.fs,
-              lin2db(abs(float(self.peak()[0]))), # only one channel here.
-              self.nofsamples, self.phasedeg, self.harmonics)
+            % (self.f0, self.fs,
+               lin2db(abs(float(self.peak()[0]))),   # only one channel here.
+               self.nofsamples, self.phasedeg, self.harmonics)
         return s
 
     def __str__(self):
         s  = Sinetone.__str__(self)
         s = s.rstrip('-----------------:---------------------\n')
         s += '\n'
-        s += 'harmonics        : %i \n' %self.harmonics
+        s += 'harmonics        : %i \n' % self.harmonics
         s += '-----------------:---------------------\n'
         return s
+
 
 class Noise(Audio):
     colours = ('white', 'pink', 'brown', 'blue', 'violet', 'grey')
@@ -964,7 +1050,7 @@ class Noise(Audio):
         grey        : equal loudness
         """
 
-        assert colour in Noise.colours, "choose the colour of the noise: %s" %str(Noise.colours)
+        assert colour in Noise.colours, "choose the colour of the noise: %s" % str(Noise.colours)
         Audio.__init__(self, channels=channels, fs=fs, nofsamples=nofsamples, duration=duration)
         # the distribution in np.random.uniform is half open, i.e -1.0 is
         # included but 1.0 is not. Possible fix: use integers instead, then
@@ -979,7 +1065,7 @@ class Noise(Audio):
         for ch in range(channels):
             self._set_samples(idx=ch,
                               samples=np.random.uniform(low=-1.0, high=1.0, size=self.nofsamples))
-        if self._colour=='pink':
+        if self._colour == 'pink':
             # -3dB per octave
             self._logger.debug("filtering to get pink noise")
             # http://dsp.stackexchange.com/q/322/6999
@@ -987,19 +1073,19 @@ class Noise(Audio):
             A = [1, -2.494956002, 2.017265875, -0.522189400]
             self.samples = scipy.signal.lfilter(B, A, self.samples, axis=0)
 
-        elif self._colour=='brown':
+        elif self._colour == 'brown':
             # -6dB per octave
             raise NotImplementedError('TODO')
 
-        elif self._colour=='blue':
+        elif self._colour == 'blue':
             # +3dB per octave
             raise NotImplementedError('TODO')
 
-        elif self._colour=='violet':
+        elif self._colour == 'violet':
             # +6dB per octave
             raise NotImplementedError('TODO')
 
-        elif self._colour=='grey':
+        elif self._colour == 'grey':
             # equal loudness
             raise NotImplementedError('TODO')
 
@@ -1007,9 +1093,10 @@ class Noise(Audio):
 
     def __str__(self):
         s  = Audio.__str__(self)
-        s += 'colour           : %s\n'  %self._colour
+        s += 'colour           : %s\n'  % self._colour
         s += '-----------------:---------------------\n'
         return s
+
 
 class WavFile(Audio):
     def __init__(self, filename=None, scale2float=True):
@@ -1023,26 +1110,27 @@ class WavFile(Audio):
 
         Audio.__init__(self, fs=fs, initialdata=samples)
 
-        del samples # just to make sure
+        del samples     # just to make sure
 
         if scale2float:
             self.convert_to_float(targetbits=64)
 
     def __str__(self):
         s  = Audio.__str__(self)
-        s += 'filename         : %s\n'  %os.path.basename(self.filename)
+        s += 'filename         : %s\n'  % os.path.basename(self.filename)
         s += '-----------------:---------------------\n'
         return s
 
-#===================================================================================================
-# Functions
-#===================================================================================================
 
+# ==================================================================================================
+# Functions
+# ==================================================================================================
 def lin2db(lin):
     with np.errstate(divide='ignore'):
         # linear value 0 is common (as -inf dB) so we ignore any division warnings
         db = 20*np.log10(lin)
     return db
+
 
 def pow2db(power):
     with np.errstate(divide='ignore'):
@@ -1050,19 +1138,22 @@ def pow2db(power):
         db = 10*np.log10(power)
     return db
 
+
 def db2lin(db):
     lin = np.power(10, np.array(db)/20)
     return lin
+
 
 def db2pow(db):
     power = np.power(10, np.array(db)/10)
     return power
 
+
 def speed_of_sound(temperature=20, medium='air'):
     """The speed of sound is depending on the medium and the temperature. For air at
     a temperature of 20 degree Celcius the speed of sound is approximately 343 [m/s]
     """
-    assert medium in ['air',], "TODO: water, iron"
+    assert medium in ['air', ], "TODO: water, iron"
 
     c = float('nan')
 
@@ -1071,10 +1162,12 @@ def speed_of_sound(temperature=20, medium='air'):
 
     return c
 
+
 def wavelength(frequency, speed=343.2):
     """Calculate the wavelength l of frequency f given the speed (of sound)"""
-    l = speed/frequency
-    return l
+    length = speed/frequency
+    return length
+
 
 def rad2hz(w0, fs=96000):
     """Calculate a normalised rotational frequency so that w0=2*pi --> f0=fs
@@ -1085,6 +1178,7 @@ def rad2hz(w0, fs=96000):
     """
     return fs*np.array(w0)/(2*np.pi)
 
+
 def hz2rad(f0, fs=96000):
     """Calculate a normalised angular frequency so that f0=fs --> w0=2*pi
 
@@ -1094,29 +1188,35 @@ def hz2rad(f0, fs=96000):
     """
     return (1/fs)*2*np.pi*np.array(f0)
 
-__all__ = [
-           # classes
-           'Audio',
-           'Sinetone',
-           'Sinetones',
-           'SquareWave',
-           'FourierSeries',
-           'Noise',
-           'WavFile',
 
-           # functions
-           'lin2db',
-           'pow2db',
-           'db2lin',
-           'db2pow',
-           'speed_of_sound',
-           'wavelength',
-           'rad2hz',
-           'hz2rad',
-           ]
+__all__ = [
+    # classes
+    'Audio',
+    'Sinetone',
+    'Sinetones',
+    'SquareWave',
+    'FourierSeries',
+    'Noise',
+    'WavFile',
+
+    # functions
+    'lin2db',
+    'pow2db',
+    'db2lin',
+    'db2pow',
+    'speed_of_sound',
+    'wavelength',
+    'rad2hz',
+    'hz2rad',
+    ]
 
 if __name__ == '__main__':
-    logging.basicConfig(format='%(levelname)-7s: %(module)s.%(funcName)-15s %(message)s',
-                        level='DEBUG')
+    logging.basicConfig(
+        format="%(levelname)-8s: %(module)s.%(funcName)-15s %(message)s",
+        level="DEBUG",
+        )
+    # some libraries are noisy in DEBUG
+    logging.getLogger("matplotlib").setLevel(logging.INFO)
+    logging.getLogger("PIL").setLevel(logging.WARNING)
 
     print('-- Done --')

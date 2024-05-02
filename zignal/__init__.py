@@ -6,18 +6,18 @@ This is the zignal library
 @license: MIT
 """
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"
 
-from .audio import *
-from . import filters
-from . import measure
-from . import music
-from . import sndcard
+# must be imported first
+from .audio import *    # isort:skip                        # noqa: F403
+
+# Local folders
+from . import filters, measure, music, sndcard
 
 __all__ = [
-           'filters',
-           'measure',
-           'music',
-           'sndcard',
-           ]
-__all__.extend(audio.__all__)       #@UndefinedVariable
+    'filters',
+    'measure',
+    'music',
+    'sndcard',
+    ]
+__all__.extend(audio.__all__)       #@UndefinedVariable    # noqa: F405,E262

@@ -6,10 +6,10 @@ Music package
 @license: MIT
 """
 
-from . import scales
-from . import spn
+# Local folders
+from . import scales, spn
 
 __all__ = [
-           'scales',
-           'spn',
-           ]
+    'scales',
+    'spn',
+    ]

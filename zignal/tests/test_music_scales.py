@@ -6,14 +6,13 @@ Created on 24 Feb 2015
 @license: MIT
 '''
 
-# standard library
+# Standard library
+import logging
 import unittest
 
-# external libraries
-import nose
-
-# local libraries
+# Internal
 from zignal.music import scales
+
 
 class Test_midi_scales(unittest.TestCase):
     # Benson, DJ. (2006). Music: A Mathematical Offering. Cambridge University Press.
@@ -51,12 +50,17 @@ class Test_midi_scales(unittest.TestCase):
         self.assertAlmostEqual(scales.midi_freq2key(900, tuning=450), 81.0, places=7)
 
     def test_back2back_key(self):
-        self.assertAlmostEqual(scales.midi_key2freq(scales.midi_freq2key(1234)),    1234,   places=7)
-        self.assertAlmostEqual(scales.midi_key2freq(scales.midi_freq2key(45.67)),   45.67,  places=7)
+        self.assertAlmostEqual(
+            scales.midi_key2freq(scales.midi_freq2key(1234)),    1234,   places=7)
+        self.assertAlmostEqual(
+            scales.midi_key2freq(scales.midi_freq2key(45.67)),   45.67,  places=7)
 
     def test_back2back_freq(self):
-        self.assertAlmostEqual(scales.midi_freq2key(scales.midi_key2freq(76.543)),  76.543, places=7)
-        self.assertAlmostEqual(scales.midi_freq2key(scales.midi_key2freq(124)),     124,    places=7)
+        self.assertAlmostEqual(
+            scales.midi_freq2key(scales.midi_key2freq(76.543)),  76.543, places=7)
+        self.assertAlmostEqual(
+            scales.midi_freq2key(scales.midi_key2freq(124)),     124,    places=7)
+
 
 class Test_piano_note_to_freq(unittest.TestCase):
     def test_octaves(self):
@@ -69,6 +73,7 @@ class Test_piano_note_to_freq(unittest.TestCase):
     def test_values(self):
         self.assertAlmostEqual(scales.piano_note2freq('C6'), 1046.50,   places=2)
         self.assertAlmostEqual(scales.piano_note2freq('D1'), 36.7081,   places=4)
+
 
 class Test_piano_freq_to_note(unittest.TestCase):
     def test_values(self):
@@ -83,18 +88,27 @@ class Test_piano_freq_to_note(unittest.TestCase):
         self.assertEqual(scales.piano_freq2note(441.00), 'A4')
         self.assertEqual(scales.piano_freq2note(447.00), 'A4')
 
+
 class Test_piano(unittest.TestCase):
     def test_back2back_key(self):
-        self.assertAlmostEqual(scales.piano_key2freq(scales.piano_freq2key(100)),   100,    places=7)
-        self.assertAlmostEqual(scales.piano_key2freq(scales.piano_freq2key(32)),    32,     places=7)
-        self.assertAlmostEqual(scales.piano_key2freq(scales.piano_freq2key(997)),   997,    places=7)
-        self.assertAlmostEqual(scales.piano_key2freq(scales.piano_freq2key(12345)), 12345,  places=7)
-        self.assertAlmostEqual(scales.piano_key2freq(scales.piano_freq2key(4.563)), 4.563,  places=7)
+        self.assertAlmostEqual(
+            scales.piano_key2freq(scales.piano_freq2key(100)),   100,   places=7)
+        self.assertAlmostEqual(
+            scales.piano_key2freq(scales.piano_freq2key(32)),    32,    places=7)
+        self.assertAlmostEqual(
+            scales.piano_key2freq(scales.piano_freq2key(997)),   997,   places=7)
+        self.assertAlmostEqual(
+            scales.piano_key2freq(scales.piano_freq2key(12345)), 12345, places=7)
+        self.assertAlmostEqual(
+            scales.piano_key2freq(scales.piano_freq2key(4.563)), 4.563, places=7)
 
     def test_back2back_freq(self):
-        self.assertAlmostEqual(scales.piano_freq2key(scales.piano_key2freq(10)), 10,        places=7)
-        self.assertAlmostEqual(scales.piano_freq2key(scales.piano_key2freq(49)), 49,        places=7)
-        self.assertAlmostEqual(scales.piano_freq2key(scales.piano_key2freq(30.3)), 30.3,    places=7)
+        self.assertAlmostEqual(
+            scales.piano_freq2key(scales.piano_key2freq(10)), 10,       places=7)
+        self.assertAlmostEqual(
+            scales.piano_freq2key(scales.piano_key2freq(49)), 49,       places=7)
+        self.assertAlmostEqual(
+            scales.piano_freq2key(scales.piano_key2freq(30.3)), 30.3,   places=7)
 
     def test_back2back_freq_quantised(self):
         self.assertAlmostEqual(scales.piano_freq2key(scales.piano_key2freq(10.2),
@@ -102,12 +116,16 @@ class Test_piano(unittest.TestCase):
         self.assertAlmostEqual(scales.piano_freq2key(scales.piano_key2freq(34.678),
                                                      quantise=True), 35, places=7)
 
+
 if __name__ == "__main__":
-    noseargs = [__name__,
-                "--verbosity=2",
-                "--logging-format=%(asctime)s %(levelname)-8s: %(name)-15s "+
-                                 "%(module)-15s %(funcName)-20s %(message)s",
-                "--logging-level=DEBUG",
-                __file__,
-                ]
-    nose.run(argv=noseargs)
+    logging.basicConfig(
+        format="%(levelname)-8s: %(module)s.%(funcName)-15s %(message)s",
+        level="DEBUG",
+        )
+    # some libraries are noisy in DEBUG
+    logging.getLogger("matplotlib").setLevel(logging.INFO)
+    logging.getLogger("PIL").setLevel(logging.WARNING)
+
+    # from command line:
+    # $ python -m unittest -v zignal/tests/<filename>.py
+    unittest.main(verbosity=2)

@@ -6,20 +6,20 @@ Created on 28 Feb 2014
 @license: MIT
 '''
 
-# standard library
+# Standard library
+import logging
 import unittest
 
-# external libraries
+# Third party
 import numpy as np
-import nose
 
-# local libraries
+# Internal
 from zignal import Audio
+
 
 class Test_EmptyConstructor(unittest.TestCase):
     def setUp(self):
         self.x = Audio()
-        print(self.x)
 
     def test_default_constructor(self):
         self.assertAlmostEqual(self.x.fs, 96000, places=7)
@@ -39,14 +39,12 @@ class Test_EmptyConstructor(unittest.TestCase):
 
         s = 'This is a comment\nwith a line break'
         self.x.comment(comment=s)
-        print(self.x)
+        self.assertSequenceEqual(self.x.comment(), s, msg="\n"+str(self.x))
 
-        self.assertSequenceEqual(self.x.comment(), s)
 
 class Test_ConstructorChannels(unittest.TestCase):
     def setUp(self):
         self.x = Audio(channels=4)
-        print(self.x)
 
     def test_str_method(self):
         self.assertIsInstance(self.x.__str__(), str)
@@ -56,45 +54,43 @@ class Test_ConstructorChannels(unittest.TestCase):
         self.assertEqual(len(self.x), 0)
 
     def test_RMS_is_nan(self):
-        print(self.x.rms())
-        self.assertTrue(np.isnan(self.x.rms()).all())
+        self.assertTrue(np.isnan(self.x.rms()).all(), msg=self.x.rms())
 
     def test_peak_is_nan(self):
         peak, idx = self.x.peak()
-        print(peak)
-        print(idx)
-        self.assertTrue(np.isnan(peak).all())
-        self.assertTrue((idx==0).all())
+        self.assertTrue(np.isnan(peak).all(), msg=str(peak))
+        self.assertTrue((idx == 0).all(), msg=str(idx))
 
     def test_crestfactor_is_nan(self):
-        print(self.x.crest_factor())
-        self.assertTrue(np.isnan(self.x.crest_factor()).all())
+        self.assertTrue(np.isnan(self.x.crest_factor()).all(), msg=self.x.crest_factor())
+
 
 class Test_ConstructorDuration(unittest.TestCase):
     def test_set_samples(self):
         x = Audio(nofsamples=300, fs=600)
-        print(x)
-        self.assertAlmostEqual(x.duration, 0.5, places=7)
+        self.assertAlmostEqual(x.duration, 0.5, places=7, msg="\n"+str(x))
 
     def test_set_duration(self):
         x = Audio(duration=1.5, fs=600)
-        print(x)
-        self.assertEqual(len(x), 900)
+        self.assertEqual(len(x), 900, msg="\n"+str(x))
 
     def test_set_duration_and_channels(self):
         x = Audio(duration=1.5, fs=600, channels=5)
-        print(x)
-        self.assertEqual(len(x), 900)
+        self.assertEqual(len(x), 900, msg="\n"+str(x))
 
     def test_set_duration_and_samples(self):
-        self.assertRaises(AssertionError, callableObj=Audio, nofsamples=10, duration=1.1)
+        self.assertRaises(AssertionError, Audio, nofsamples=10, duration=1.1)
+
 
 if __name__ == "__main__":
-    noseargs = [__name__,
-                "--verbosity=2",
-                "--logging-format=%(asctime)s %(levelname)-8s: %(name)-15s "+
-                                 "%(module)-15s %(funcName)-20s %(message)s",
-                "--logging-level=DEBUG",
-                __file__,
-                ]
-    nose.run(argv=noseargs)
+    logging.basicConfig(
+        format="%(levelname)-8s: %(module)s.%(funcName)-15s %(message)s",
+        level="DEBUG",
+        )
+    # some libraries are noisy in DEBUG
+    logging.getLogger("matplotlib").setLevel(logging.INFO)
+    logging.getLogger("PIL").setLevel(logging.WARNING)
+
+    # from command line:
+    # $ python -m unittest -v zignal/tests/<filename>.py
+    unittest.main(verbosity=2)

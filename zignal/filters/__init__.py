@@ -6,10 +6,11 @@ Filters package
 @license: MIT
 """
 
-from . import linearfilter
-from . import biquads
+# Local folders
+from . import biquads, cic, linearfilter
 
 __all__ = [
-           'biquads',
-           'linearfilter',
-           ]
+    'biquads',
+    'cic',
+    'linearfilter',
+    ]
