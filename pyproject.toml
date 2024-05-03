@@ -52,7 +52,7 @@ keywords = [
 [project.optional-dependencies]
 dev = [
     "flake8",
-    "isort",
+    "isort[colors]",
 ]
 
 [project.urls]
