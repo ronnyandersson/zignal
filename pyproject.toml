@@ -61,7 +61,7 @@ Issues = "https://github.com/ronnyandersson/zignal/issues"
 Download = "https://pypi.python.org/pypi/zignal"
 
 [tool.hatch.version]
-path = "zignal/__init__.py"
+path = "src/zignal/__init__.py"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
@@ -70,5 +70,6 @@ exclude = [
 
 [tool.hatch.build.targets.wheel]
 exclude = [
-    "tests/",
+    "src/examples/",
+    "src/tests/",
 ]

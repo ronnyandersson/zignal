@@ -5,15 +5,15 @@ check: isort flake8 test
 
 .PHONY: isort
 isort:
-	isort zignal/*.py zignal/**/*.py examples/*.py --check-only
+	isort src/ --check-only --diff --gitignore
 	@echo ""
 
 .PHONY: flake8
 flake8:
-	flake8 --extend-ignore=E265 --statistics zignal/ examples/
+	flake8 --extend-ignore=E265 --statistics src/
 	@echo ""
 
 .PHONY: test
 test:
-	python -m unittest -v zignal/tests/test_*.py
+	python -m unittest -v src/tests/test_*.py
 	@echo ""
