@@ -10,7 +10,10 @@ Created on 16 Feb 2015
 import logging
 
 # Internal
-from zignal.audio import Audio, FourierSeries
+from zignal.audio import (
+    Audio,
+    FourierSeries
+    )
 
 if __name__ == '__main__':
     logging.basicConfig(

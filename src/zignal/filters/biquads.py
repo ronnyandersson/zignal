@@ -8,7 +8,10 @@ Created on 16 Feb 2014
 
 # Standard library
 import logging
-from abc import ABCMeta, abstractmethod
+from abc import (
+    ABCMeta,
+    abstractmethod
+    )
 
 # Third party
 import numpy as np

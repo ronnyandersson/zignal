@@ -14,7 +14,12 @@ import unittest
 import numpy as np
 
 # Internal
-from zignal import db2lin, db2pow, lin2db, pow2db
+from zignal import (
+    db2lin,
+    db2pow,
+    lin2db,
+    pow2db
+    )
 
 
 class Test_back_to_back(unittest.TestCase):

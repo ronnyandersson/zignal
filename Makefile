@@ -5,7 +5,7 @@ check: isort flake8 test
 
 .PHONY: isort
 isort:
-	isort src/ --check-only --diff --gitignore --color
+	isort src/ --check-only --diff --gitignore --color --force-grid-wrap 2 --multi-line 8
 	@echo ""
 
 .PHONY: flake8

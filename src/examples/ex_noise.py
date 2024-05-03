@@ -10,7 +10,10 @@ Created on 16 Feb 2015
 import logging
 
 # Internal
-from zignal.audio import Audio, Noise
+from zignal.audio import (
+    Audio,
+    Noise
+    )
 
 if __name__ == '__main__':
     logging.basicConfig(

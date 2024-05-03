@@ -11,7 +11,10 @@ import logging
 import unittest
 
 # Internal
-from zignal import Sinetone, SquareWave
+from zignal import (
+    Sinetone,
+    SquareWave
+    )
 
 
 class Test_Sinetone(unittest.TestCase):

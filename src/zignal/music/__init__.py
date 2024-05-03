@@ -7,7 +7,10 @@ Music package
 """
 
 # Local folders
-from . import scales, spn
+from . import (
+    scales,
+    spn
+    )
 
 __all__ = [
     'scales',

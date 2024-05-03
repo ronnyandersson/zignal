@@ -10,7 +10,10 @@ Created on 23 Aug 2015
 import logging
 
 # Internal
-from zignal.filters.biquads import RBJ, Zolzer
+from zignal.filters.biquads import (
+    RBJ,
+    Zolzer
+    )
 
 if __name__ == '__main__':
     logging.basicConfig(

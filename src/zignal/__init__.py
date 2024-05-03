@@ -12,7 +12,11 @@ __version__ = "0.7.0"
 from .audio import *    # isort:skip                        # noqa: F403
 
 # Local folders
-from . import filters, measure, music
+from . import (
+    filters,
+    measure,
+    music
+    )
 
 __all__ = [
     'filters',

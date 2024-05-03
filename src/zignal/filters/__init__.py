@@ -7,7 +7,11 @@ Filters package
 """
 
 # Local folders
-from . import biquads, cic, linearfilter
+from . import (
+    biquads,
+    cic,
+    linearfilter
+    )
 
 __all__ = [
     'biquads',

@@ -15,7 +15,10 @@ import numpy as np
 import scipy.signal
 
 # Internal
-from zignal import hz2rad, rad2hz
+from zignal import (
+    hz2rad,
+    rad2hz
+    )
 
 
 # ==================================================================================================
