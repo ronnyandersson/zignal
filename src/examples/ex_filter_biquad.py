@@ -12,7 +12,7 @@ import logging
 # Internal
 from zignal.filters.biquads import (
     RBJ,
-    Zolzer
+    Zolzer,
     )
 
 if __name__ == '__main__':

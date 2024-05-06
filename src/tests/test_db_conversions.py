@@ -18,7 +18,7 @@ from zignal import (
     db2lin,
     db2pow,
     lin2db,
-    pow2db
+    pow2db,
     )
 
 

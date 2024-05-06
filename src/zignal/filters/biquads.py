@@ -10,7 +10,7 @@ Created on 16 Feb 2014
 import logging
 from abc import (
     ABCMeta,
-    abstractmethod
+    abstractmethod,
     )
 
 # Third party

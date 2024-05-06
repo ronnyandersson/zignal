@@ -10,7 +10,7 @@ Filters package
 from . import (
     biquads,
     cic,
-    linearfilter
+    linearfilter,
     )
 
 __all__ = [

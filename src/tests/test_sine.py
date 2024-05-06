@@ -13,7 +13,7 @@ import unittest
 # Internal
 from zignal import (
     Sinetone,
-    SquareWave
+    SquareWave,
     )
 
 

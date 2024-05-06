@@ -14,7 +14,7 @@ from zignal.audio import (
     Audio,
     Noise,
     Sinetone,
-    SquareWave
+    SquareWave,
     )
 
 if __name__ == '__main__':

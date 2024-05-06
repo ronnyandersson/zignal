@@ -9,7 +9,7 @@ Music package
 # Local folders
 from . import (
     scales,
-    spn
+    spn,
     )
 
 __all__ = [

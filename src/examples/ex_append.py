@@ -13,7 +13,7 @@ import logging
 from zignal.audio import (
     Audio,
     Noise,
-    Sinetone
+    Sinetone,
     )
 
 if __name__ == '__main__':

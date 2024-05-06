@@ -15,7 +15,7 @@ from .audio import *    # isort:skip                        # noqa: F403
 from . import (
     filters,
     measure,
-    music
+    music,
     )
 
 __all__ = [

@@ -12,7 +12,7 @@ import logging
 # Internal
 from zignal.audio import (
     Audio,
-    FourierSeries
+    FourierSeries,
     )
 
 if __name__ == '__main__':

@@ -17,7 +17,7 @@ import scipy.signal
 # Internal
 from zignal import (
     hz2rad,
-    rad2hz
+    rad2hz,
     )
 
 
