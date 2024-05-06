@@ -16,5 +16,5 @@ flake8:
 
 .PHONY: test
 test:
-	python -m unittest -v src/tests/test_*.py
+	python -m unittest --verbose --buffer src/tests/test_*.py
 	@echo ""
