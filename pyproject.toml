@@ -55,6 +55,10 @@ dev = [
     "isort[colors]",
 ]
 
+[project.scripts]
+zignal-combine = "cmdline_tools.combine:main"
+zignal-normalise = "cmdline_tools.normalise:main"
+
 [project.urls]
 Homepage = "https://github.com/ronnyandersson/zignal"
 Issues = "https://github.com/ronnyandersson/zignal/issues"
