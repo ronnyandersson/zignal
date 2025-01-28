@@ -56,8 +56,8 @@ dev = [
 ]
 
 [project.scripts]
-zignal-combine = "cmdline_tools.combine:main"
-zignal-normalise = "cmdline_tools.normalise:main"
+zignal-combine = "zignal._cmdline_tools.combine:main"
+zignal-normalise = "zignal._cmdline_tools.normalise:main"
 
 [project.urls]
 Homepage = "https://github.com/ronnyandersson/zignal"
